@@ -1,0 +1,15 @@
+      getlocal0
+      pushfalse
+      setproperty         QName(PrivateNamespace(null, "<className>"), "isEditingValue")
+
+      getlocal0
+      getproperty         QName(PackageNamespace(""), "Value_tf")
+      pushfalse
+      setproperty         QName(PackageNamespace(""), "selectable")
+
+      getlocal0
+      getproperty         QName(PackageNamespace(""), "Value_tf")
+      getlex              QName(PackageNamespace("flash.text"), "TextFieldType")
+      getproperty         QName(PackageNamespace(""), "DYNAMIC")
+      setproperty         QName(PackageNamespace(""), "type")
+

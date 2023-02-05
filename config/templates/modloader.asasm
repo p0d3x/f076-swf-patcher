@@ -1,0 +1,178 @@
+  trait method QName(PrivateNamespace("<className>"), "loadMod")
+   method
+    refid "<className>/instance/<className>/loadMod"
+    param QName(PackageNamespace(""), "String")
+    returns QName(PackageNamespace(""), "void")
+    flag NEED_ACTIVATION
+    body
+     maxstack 5
+     localcount 4
+     initscopedepth 13
+     maxscopedepth 18
+     code
+      getlocal0
+      pushscope
+
+      newactivation
+      dup
+      setlocal2
+
+      pushscope
+
+      getscopeobject      1
+      pushnull
+      coerce              QName(PackageNamespace("flash.display"), "Loader")
+      setslot             2
+
+      getscopeobject      1
+      getlocal1
+      setslot             1
+
+L13:
+      getlex              QName(PackageNamespace("Shared"), "GlobalFunc")
+      pushstring          "loading mod: "
+      getscopeobject      1
+      getslot             1
+      add
+      callpropvoid        QName(PackageNamespace(""), "ShowHUDMessage"), 1
+
+      getscopeobject      1
+      findpropstrict      QName(PackageNamespace("flash.display"), "Loader")
+      constructprop       QName(PackageNamespace("flash.display"), "Loader"), 0
+      coerce              QName(PackageNamespace("flash.display"), "Loader")
+      setslot             2
+
+      getscopeobject      1
+      getslot             2
+      getproperty         QName(PackageNamespace(""), "uncaughtErrorEvents")
+      getlex              QName(PackageNamespace("flash.events"), "UncaughtErrorEvent")
+      getproperty         QName(PackageNamespace(""), "UNCAUGHT_ERROR")
+      getlocal0
+      getproperty         QName(PrivateNamespace("<className>"), "uncaughtErrorHandler")
+      callpropvoid        QName(PackageNamespace(""), "addEventListener"), 2
+
+      getscopeobject      1
+      getslot             2
+      findpropstrict      QName(PackageNamespace("flash.net"), "URLRequest")
+      getscopeobject      1
+      getslot             1
+      constructprop       QName(PackageNamespace("flash.net"), "URLRequest"), 1
+      findpropstrict      QName(PackageNamespace("flash.system"), "LoaderContext")
+      pushfalse
+      getlex              QName(PackageNamespace("flash.system"), "ApplicationDomain")
+      getproperty         QName(PackageNamespace(""), "currentDomain")
+      constructprop       QName(PackageNamespace("flash.system"), "LoaderContext"), 2
+      callpropvoid        QName(PackageNamespace(""), "load"), 2
+
+      findpropstrict      QName(PackageNamespace(""), "addChild")
+      getscopeobject      1
+      getslot             2
+      callpropvoid        QName(PackageNamespace(""), "addChild"), 1
+
+L48:
+      jump                L68
+
+L49:
+      getlocal0
+      pushscope
+
+      getlocal2
+      pushscope
+
+      newcatch            0
+      dup
+      setlocal3
+
+      dup
+      pushscope
+
+      swap
+      setslot             1
+
+      getlex              QName(PackageNamespace("Shared"), "GlobalFunc")
+      pushstring          "Error loading mod: "
+      getscopeobject      2
+      getslot             1
+      add
+      callpropvoid        QName(PackageNamespace(""), "ShowHUDMessage"), 1
+
+      popscope
+      kill                3
+L68:
+      returnvoid
+     end ; code
+     try from L13 to L48 target L49 type QName(PackageNamespace(""), "Error") name QName(PackageNamespace(""), "e") end
+     trait slot QName(PackageInternalNs(""), "modfile") slotid 1 type QName(PackageNamespace(""), "String") end
+     trait slot QName(PackageInternalNs(""), "modLoader") slotid 2 type QName(PackageNamespace("flash.display"), "Loader") end
+    end ; body
+   end ; method
+  end ; trait
+  trait method QName(PrivateNamespace("<className>"), "uncaughtErrorHandler")
+   method
+    refid "<className>/instance/<className>/uncaughtErrorHandler"
+    param QName(PackageNamespace("flash.events"), "UncaughtErrorEvent")
+    returns QName(PackageNamespace(""), "void")
+    body
+     maxstack 3
+     localcount 4
+     initscopedepth 12
+     maxscopedepth 13
+     code
+      getlocal0
+      pushscope
+
+      pushnull
+      coerce              QName(PackageNamespace(""), "Error")
+      setlocal2
+
+      pushnull
+      coerce              QName(PackageNamespace("flash.events"), "ErrorEvent")
+      setlocal3
+
+      getlocal1
+      getproperty         QName(PackageNamespace(""), "error")
+      getlex              QName(PackageNamespace(""), "Error")
+      istypelate
+      iffalse             L25
+
+      getlocal1
+      getproperty         QName(PackageNamespace(""), "error")
+      getlex              QName(PackageNamespace(""), "Error")
+      astypelate
+      coerce              QName(PackageNamespace(""), "Error")
+      setlocal2
+
+      getlex              QName(PackageNamespace("Shared"), "GlobalFunc")
+      pushstring          "Error: "
+      getlocal2
+      add
+      callpropvoid        QName(PackageNamespace(""), "ShowHUDMessage"), 1
+
+      jump                L41
+
+L25:
+      getlocal1
+      getproperty         QName(PackageNamespace(""), "error")
+      getlex              QName(PackageNamespace("flash.events"), "ErrorEvent")
+      istypelate
+      iffalse             L41
+
+      getlocal1
+      getproperty         QName(PackageNamespace(""), "error")
+      getlex              QName(PackageNamespace("flash.events"), "ErrorEvent")
+      astypelate
+      coerce              QName(PackageNamespace("flash.events"), "ErrorEvent")
+      setlocal3
+
+      getlex              QName(PackageNamespace("Shared"), "GlobalFunc")
+      pushstring          "Error: "
+      getlocal3
+      add
+      callpropvoid        QName(PackageNamespace(""), "ShowHUDMessage"), 1
+
+L41:
+      returnvoid
+     end ; code
+    end ; body
+   end ; method
+  end ; trait

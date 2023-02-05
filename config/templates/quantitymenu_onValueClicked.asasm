@@ -1,0 +1,42 @@
+  trait method QName(PackageNamespace(""), "onValueClicked")
+   method
+    refid "<className>/instance/onValueClicked"
+    param QName(PackageNamespace("flash.events"), "MouseEvent")
+    body
+     maxstack 3
+     localcount 2
+     initscopedepth 10
+     maxscopedepth 11
+     code
+      getlocal0
+      pushscope
+
+      getlocal0
+      getproperty         QName(PackageNamespace(""), "Value_tf")
+      getlex              QName(PackageNamespace("flash.text"), "TextFieldType")
+      getproperty         QName(PackageNamespace(""), "INPUT")
+      setproperty         QName(PackageNamespace(""), "type")
+
+      getlocal0
+      getproperty         QName(PackageNamespace(""), "Value_tf")
+      pushtrue
+      setproperty         QName(PackageNamespace(""), "selectable")
+
+      getlocal0
+      getproperty         QName(PackageNamespace(""), "Value_tf")
+      pushbyte            0
+      getlocal0
+      getproperty         QName(PackageNamespace(""), "Value_tf")
+      getproperty         QName(PackageNamespace(""), "text")
+      getproperty         QName(PackageNamespace(""), "length")
+      callpropvoid        QName(PackageNamespace(""), "setSelection"), 2
+
+      getlocal0
+      pushtrue
+      setproperty         QName(PrivateNamespace(null, "<className>"), "isEditingValue")
+
+      returnvoid
+     end ; code
+    end ; body
+   end ; method
+  end ; trait

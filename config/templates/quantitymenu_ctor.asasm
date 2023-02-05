@@ -1,0 +1,28 @@
+     getlocal0
+     getproperty         QName(PackageNamespace(""), "Value_tf")
+     getlex              QName(PackageNamespace("flash.events"), "MouseEvent")
+     getproperty         QName(PackageNamespace(""), "CLICK")
+     getlocal0
+     getproperty         QName(PackageNamespace(""), "onValueClicked")
+     callpropvoid        QName(PackageNamespace(""), "addEventListener"), 2
+
+     getlocal0
+     getproperty         QName(PackageNamespace(""), "Value_tf")
+     pushtrue
+     setproperty         QName(PackageNamespace(""), "border")
+
+     getlocal0
+     getproperty         QName(PackageNamespace(""), "Value_tf")
+     pushint             5216163
+     setproperty         QName(PackageNamespace(""), "borderColor")
+
+     getlocal0
+     getproperty         QName(PackageNamespace(""), "Value_tf")
+     pushtrue
+     setproperty         QName(PackageNamespace(""), "background")
+
+     getlocal0
+     getproperty         QName(PackageNamespace(""), "Value_tf")
+     pushint             5658199
+     setproperty         QName(PackageNamespace(""), "backgroundColor")
+

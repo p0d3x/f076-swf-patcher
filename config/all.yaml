@@ -1,0 +1,59 @@
+bsabrowserPath: "I:\\Modding\\Fallout 76\\tools\\BSA Browser Portable-1756-1-16-0-1647634108\\"
+rabcdasmPath: "I:\\Modding\\Fallout 76\\RABCDAsm_v1.18\\"
+archivePath: "E:\\SteamLibrary\\steamapps\\common\\Fallout76\\Data\\SeventySix - Interface.ba2"
+templatePath: "./config/templates"
+patches:
+  mapmenu:
+    modDir: "I:\\Modding\\Fallout 76\\NukaShopper"
+    workingDir: "loader\\generated"
+    swfPath: "interface/mapmenu.swf"
+    targetPatchFile: "interface/mapmenu-0.abc.patched"
+    targetDir: "release"
+    edits:
+      MapMenu:
+        - name: "injectSFE"
+        - name: "injectLoader"
+          params:
+            modFile: "NukaShopper.swf"
+            template: "modloader.asasm"
+        - name: "makePackagePrivate"
+          params:
+            fieldName: "ButtonHintDataV"
+      MapHolder:
+        - name: "makePackagePrivate"
+          params:
+            fieldName: "MarkerClipsA"
+  hudmenu:
+    modDir: "I:\\Modding\\Fallout 76\\NukaShopper"
+    workingDir: "loader-hudmenu\\generated"
+    swfPath: "interface/hudmenu.swf"
+    targetPatchFile: "interface/hudmenu-0.abc.patched"
+    targetDir: "release"
+    edits:
+      HudMenu:
+        - name: "injectSFE"
+        - name: "injectLoader"
+          params:
+            modFile: "NukaShopper.swf"
+            template: "modloader.asasm"
+  securetrade:
+    modDir: "I:\\Modding\\Fallout 76\\InventOmatic\\src\\InventOmaticStash"
+    workingDir: "loader\\generated"
+    swfPath: "interface/securetrade.swf"
+    targetPatchFile: "interface/securetrade-0.abc.patched"
+    targetDir: "release"
+    edits:
+      SecureTrade:
+        - name: "injectSFE"
+        - name: "injectLoader"
+          params:
+            modFile: "InventOmaticStash.swf"
+            template: "modloader_callback.asasm"
+        - name: "makePackagePrivate"
+          params:
+            fieldName: "ButtonHintDataV"
+        - name: "makePackagePrivate"
+          params:
+            fieldName: "ButtonHintBar_mc"
+      "Shared.AS3.QuantityMenu":
+        - name: "patchQuantityMenu"

@@ -1,0 +1,8 @@
+      getlocal0
+      getproperty         QName(PackageNamespace(""), "Value_tf")
+      findpropstrict      QName(PackageNamespace("flash.events"), "MouseEvent")
+      getlex              QName(PackageNamespace("flash.events"), "MouseEvent")
+      getproperty         QName(PackageNamespace(""), "CLICK")
+      constructprop       QName(PackageNamespace("flash.events"), "MouseEvent"), 1
+      callpropvoid        QName(PackageNamespace(""), "dispatchEvent"), 1
+

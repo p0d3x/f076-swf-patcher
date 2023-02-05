@@ -1,0 +1,164 @@
+  trait method QName(PackageNamespace(""), "onKeyDown")
+   method
+    refid "<className>/instance/onKeyDown"
+    param QName(PackageNamespace("flash.events"), "KeyboardEvent")
+    body
+     maxstack 3
+     localcount 2
+     initscopedepth 10
+     maxscopedepth 11
+     code
+      getlocal0
+      pushscope
+
+      getlocal1
+      getproperty         QName(PackageNamespace(""), "keyCode")
+      getlex              QName(PackageNamespace("flash.ui"), "Keyboard")
+      getproperty         QName(PackageNamespace(""), "RIGHT")
+      ifne                L33
+
+      getlocal0
+      pushtrue
+      initproperty        QName(PrivateNamespace(null, "<className>"), "bIsScrolling")
+
+      getlocal0
+      findpropstrict      QName(PackageNamespace("flash.utils"), "getTimer")
+      callproperty        QName(PackageNamespace("flash.utils"), "getTimer"), 0
+      initproperty        QName(PrivateNamespace(null, "<className>"), "uiScrollStartTime")
+
+      getlocal0
+      pushbyte            1
+      initproperty        QName(PrivateNamespace(null, "<className>"), "iScrollSpeed")
+
+      getlocal0
+      pushbyte            1
+      callpropvoid        QName(PrivateNamespace(null, "<className>"), "modifyQuantity"), 1
+
+      findpropstrict      QName(PackageNamespace(""), "addEventListener")
+      getlex              QName(PackageNamespace("flash.events"), "Event")
+      getproperty         QName(PackageNamespace(""), "ENTER_FRAME")
+      getlocal0
+      getproperty         QName(PackageInternalNs("Shared.AS3"), "onArrowTick")
+      callpropvoid        QName(PackageNamespace(""), "addEventListener"), 2
+
+      findpropstrict      QName(PackageNamespace(""), "removeEventListener")
+      getlex              QName(PackageNamespace("flash.events"), "KeyboardEvent")
+      getproperty         QName(PackageNamespace(""), "KEY_DOWN")
+      getlocal0
+      getproperty         QName(PackageNamespace(""), "onKeyDown")
+      callpropvoid        QName(PackageNamespace(""), "removeEventListener"), 2
+
+      jump                L115
+
+L33:
+      getlocal1
+      getproperty         QName(PackageNamespace(""), "keyCode")
+      getlex              QName(PackageNamespace("flash.ui"), "Keyboard")
+      getproperty         QName(PackageNamespace(""), "LEFT")
+      ifne                L64
+
+      getlocal0
+      pushtrue
+      initproperty        QName(PrivateNamespace(null, "<className>"), "bIsScrolling")
+
+      getlocal0
+      findpropstrict      QName(PackageNamespace("flash.utils"), "getTimer")
+      callproperty        QName(PackageNamespace("flash.utils"), "getTimer"), 0
+      initproperty        QName(PrivateNamespace(null, "<className>"), "uiScrollStartTime")
+
+      getlocal0
+      pushbyte            -1
+      initproperty        QName(PrivateNamespace(null, "<className>"), "iScrollSpeed")
+
+      getlocal0
+      pushbyte            -1
+      callpropvoid        QName(PrivateNamespace(null, "<className>"), "modifyQuantity"), 1
+
+      findpropstrict      QName(PackageNamespace(""), "addEventListener")
+      getlex              QName(PackageNamespace("flash.events"), "Event")
+      getproperty         QName(PackageNamespace(""), "ENTER_FRAME")
+      getlocal0
+      getproperty         QName(PackageInternalNs("Shared.AS3"), "onArrowTick")
+      callpropvoid        QName(PackageNamespace(""), "addEventListener"), 2
+
+      findpropstrict      QName(PackageNamespace(""), "removeEventListener")
+      getlex              QName(PackageNamespace("flash.events"), "KeyboardEvent")
+      getproperty         QName(PackageNamespace(""), "KEY_DOWN")
+      getlocal0
+      getproperty         QName(PackageNamespace(""), "onKeyDown")
+      callpropvoid        QName(PackageNamespace(""), "removeEventListener"), 2
+
+      jump                L115
+
+L64:
+      getlocal1
+      getproperty         QName(PackageNamespace(""), "keyCode")
+      getlex              QName(PackageNamespace("flash.ui"), "Keyboard")
+      getproperty         QName(PackageNamespace(""), "NUMBER_0")
+      greaterequals
+      dup
+      iffalse             L77
+
+      pop
+      getlocal1
+      getproperty         QName(PackageNamespace(""), "keyCode")
+      getlex              QName(PackageNamespace("flash.ui"), "Keyboard")
+      getproperty         QName(PackageNamespace(""), "NUMBER_9")
+      lessequals
+L77:
+      dup
+      iftrue              L93
+
+      pop
+      getlocal1
+      getproperty         QName(PackageNamespace(""), "keyCode")
+      getlex              QName(PackageNamespace("flash.ui"), "Keyboard")
+      getproperty         QName(PackageNamespace(""), "NUMPAD_0")
+      greaterequals
+      dup
+      iffalse             L93
+
+      pop
+      getlocal1
+      getproperty         QName(PackageNamespace(""), "keyCode")
+      getlex              QName(PackageNamespace("flash.ui"), "Keyboard")
+      getproperty         QName(PackageNamespace(""), "NUMPAD_9")
+      lessequals
+L93:
+      iffalse             L104
+
+      getlocal0
+      getproperty         QName(PrivateNamespace(null, "<className>"), "isEditingValue")
+      iffalse             L103
+
+      getlocal0
+      getlex              QName(PackageNamespace(""), "String")
+      getlocal1
+      getproperty         QName(PackageNamespace(""), "charCode")
+      callproperty        QName(Namespace("http://adobe.com/AS3/2006/builtin"), "fromCharCode"), 1
+      callpropvoid        QName(PackageNamespace(""), "updateValueInput"), 1
+
+L103:
+      jump                L115
+
+L104:
+      getlocal1
+      getproperty         QName(PackageNamespace(""), "keyCode")
+      getlex              QName(PackageNamespace("flash.ui"), "Keyboard")
+      getproperty         QName(PackageNamespace(""), "BACKSPACE")
+      ifne                L115
+
+      getlocal0
+      getproperty         QName(PrivateNamespace(null, "<className>"), "isEditingValue")
+      iffalse             L115
+
+      getlocal0
+      pushstring          ""
+      callpropvoid        QName(PackageNamespace(""), "updateValueInput"), 1
+
+L115:
+      returnvoid
+     end ; code
+    end ; body
+   end ; method
+  end ; trait

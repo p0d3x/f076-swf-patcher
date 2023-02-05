@@ -1,0 +1,110 @@
+  trait method QName(PackageNamespace(""), "updateValueInput")
+   method
+    refid "<className>/instance/updateValueInput"
+    param QName(PackageNamespace(""), "String")
+    returns QName(PackageNamespace(""), "void")
+    body
+     maxstack 6
+     localcount 2
+     initscopedepth 10
+     maxscopedepth 11
+     code
+      getlocal0
+      pushscope
+
+      getlocal0
+      getproperty         QName(PackageNamespace(""), "Value_tf")
+      getproperty         QName(PackageNamespace(""), "selectionEndIndex")
+      getlocal0
+      getproperty         QName(PackageNamespace(""), "Value_tf")
+      getproperty         QName(PackageNamespace(""), "selectionBeginIndex")
+      subtract
+      getlocal0
+      getproperty         QName(PackageNamespace(""), "Value_tf")
+      getproperty         QName(PackageNamespace(""), "text")
+      getproperty         QName(PackageNamespace(""), "length")
+      ifne                L31
+
+      getlocal1
+      pushstring          ""
+      ifne                L22
+
+      getlocal0
+      getlocal0
+      getproperty         QName(ProtectedNamespace("<className>"), "uiQuantity")
+      callpropvoid        QName(PrivateNamespace(null, "<className>"), "modifyQuantity"), 1
+
+      jump                L30
+
+L22:
+      getlocal0
+      findpropstrict      QName(PackageNamespace(""), "Number")
+      getlocal1
+      callproperty        QName(PackageNamespace(""), "Number"), 1
+      getlocal0
+      getproperty         QName(ProtectedNamespace("<className>"), "uiQuantity")
+      subtract
+      callpropvoid        QName(PrivateNamespace(null, "<className>"), "modifyQuantity"), 1
+
+L30:
+      jump                L64
+
+L31:
+      getlocal1
+      pushstring          ""
+      ifne                L52
+
+      getlocal0
+      findpropstrict      QName(PackageNamespace(""), "Number")
+      getlocal0
+      getproperty         QName(PackageNamespace(""), "Value_tf")
+      getproperty         QName(PackageNamespace(""), "text")
+      pushbyte            0
+      getlocal0
+      getproperty         QName(PackageNamespace(""), "Value_tf")
+      getproperty         QName(PackageNamespace(""), "text")
+      getproperty         QName(PackageNamespace(""), "length")
+      decrement
+      callproperty        QName(Namespace("http://adobe.com/AS3/2006/builtin"), "substr"), 2
+      callproperty        QName(PackageNamespace(""), "Number"), 1
+      getlocal0
+      getproperty         QName(ProtectedNamespace("<className>"), "uiQuantity")
+      subtract
+      callpropvoid        QName(PrivateNamespace(null, "<className>"), "modifyQuantity"), 1
+
+      jump                L64
+
+L52:
+      getlocal0
+      findpropstrict      QName(PackageNamespace(""), "Number")
+      getlocal0
+      getproperty         QName(PackageNamespace(""), "Value_tf")
+      getproperty         QName(PackageNamespace(""), "text")
+      getlocal1
+      add
+      callproperty        QName(PackageNamespace(""), "Number"), 1
+      getlocal0
+      getproperty         QName(ProtectedNamespace("<className>"), "uiQuantity")
+      subtract
+      callpropvoid        QName(PrivateNamespace(null, "<className>"), "modifyQuantity"), 1
+
+L64:
+      getlocal0
+      getproperty         QName(PackageNamespace(""), "Value_tf")
+      getlocal0
+      getproperty         QName(PackageNamespace(""), "Value_tf")
+      getproperty         QName(PackageNamespace(""), "caretIndex")
+      pushbyte            1
+      add
+      getlocal0
+      getproperty         QName(PackageNamespace(""), "Value_tf")
+      getproperty         QName(PackageNamespace(""), "caretIndex")
+      pushbyte            1
+      add
+      callpropvoid        QName(PackageNamespace(""), "setSelection"), 2
+
+      returnvoid
+     end ; code
+    end ; body
+   end ; method
+  end ; trait
