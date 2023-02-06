@@ -1,13 +1,11 @@
 package pdx.fo76.asasm;
 
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
+import lombok.Value;
 
-@EqualsAndHashCode
-@RequiredArgsConstructor
+@Value
 public class QName implements Identifier {
-    private final Namespace namespace;
-    private final String fieldName;
+    Namespace namespace;
+    String fieldName;
 
     public static QName ofPackage(String className) {
         return of(Namespace.ofPackage(""), className);

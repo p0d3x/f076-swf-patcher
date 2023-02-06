@@ -2,24 +2,18 @@ package pdx.fo76.asasm.instruction;
 
 import lombok.Getter;
 import pdx.fo76.asasm.QName;
+import pdx.fo76.injection.EditException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class Node {
+public abstract class Node {
 
     @Getter
     private final List<Node> instructions = new ArrayList<>();
-
-    public String getName() {
-        return null;
-    }
-
-    public boolean paramsEquals(String testValue) {
-        return false;
-    }
 
     public void add(Node node) {
         instructions.add(node);
@@ -36,7 +30,8 @@ public class Node {
     public Node m(String ... instrs) {
         Node result = this;
         for (String instr : instrs) {
-            result = result.getInstructions().stream().filter(i -> i.getName().equals(instr)).findFirst().get();
+            result = result.getInstructions().stream().filter(i -> i.getName().equals(instr)).findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("unable to find method via " + Arrays.toString(instrs)));
         }
         return result;
     }
@@ -101,8 +96,12 @@ public class Node {
         throw new IllegalArgumentException(searchName + " not found");
     }
 
+    public abstract String getName();
+
     private static boolean isMethod(Node instr, String methodName) {
-        return instr.getName().equals("trait")
-                && instr.paramsEquals("method QName(PackageNamespace(\"\"), \"" + methodName + "\")");
+        if (instr instanceof TraitMethod trait) {
+            return trait.getMethodName().equals(methodName);
+        }
+        return false;
     }
 }

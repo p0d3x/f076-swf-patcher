@@ -13,7 +13,7 @@ public abstract class PatcherStageASASMBundle<T extends PatcherStageABC<?>> exte
         this.asmPath = asmPath;
     }
 
-    public abstract void execute() throws Exception;
+    public abstract void execute() throws PatcherException;
 
     public PatcherStageASASMFile<PatcherStageASASMBundle<?>> openClass(String className) {
         if (className.contains(".")) {
@@ -39,7 +39,7 @@ public abstract class PatcherStageASASMBundle<T extends PatcherStageABC<?>> exte
         }
 
         @Override
-        public void execute() throws Exception {
+        public void execute() throws PatcherException {
             List<String> command = new ArrayList<>();
             command.add(rabcdasmPath + "rabcdasm.exe");
             command.add(abcFileName);

@@ -1,47 +1,23 @@
 package pdx.fo76.asasm.instruction;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.apache.commons.lang3.StringUtils;
 import pdx.fo76.asasm.Identifier;
 import pdx.fo76.asasm.QName;
 
-import java.util.stream.Stream;
-
 @EqualsAndHashCode(callSuper = true)
-@Data
-@AllArgsConstructor
-public class ConstructProp extends Node {
-    Identifier object;
-    int numArgs;
+public class ConstructProp extends Indented2ParamNode<Identifier, Integer> {
 
-    @Override
-    public String toString() {
-        return "constructprop       " + object + ", " + numArgs;
-    }
-
-    @Override
-    public String getName() {
-        return "constructprop";
-    }
-
-    @Override
-    public Stream<String> stream(int indent) {
-        return Stream.concat(Stream.of(StringUtils.repeat(" ", indent) + this), super.stream(indent));
-    }
-
-    @Override
-    public boolean paramsEquals(String testValue) {
-        return object.toString().equals(testValue);
+    public ConstructProp(Identifier object, int numArgs) {
+        super("constructprop", object, numArgs, 20);
     }
 
     @Override
     public void replaceScopes(QName[] qNamesToReplace, QName qNameReplacement) {
-        if (object != null) {
+        if (getParam1() != null) {
             for (QName toReplace : qNamesToReplace) {
-                if (object.equals(toReplace)) {
-                    object = qNameReplacement;
+                if (getParam1().equals(toReplace)) {
+                    setParam1(qNameReplacement);
+                    break;
                 }
             }
         }

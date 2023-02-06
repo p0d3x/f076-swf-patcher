@@ -2,12 +2,14 @@ package pdx.fo76.asasm.instruction;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import pdx.fo76.asasm.QName;
 
 import java.util.stream.Stream;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Slf4j
 @AllArgsConstructor
@@ -17,7 +19,7 @@ public class NotImplemented extends Node {
 
     @Override
     public String toString() {
-        return instruction + (params != null ? ' ' + params : "");
+        return instruction + (params != null && !params.isBlank() ? ' ' + params : "");
     }
 
     @Override
@@ -40,9 +42,5 @@ public class NotImplemented extends Node {
             }
         }
         super.replaceScopes(qNamesToReplace, qNameReplacement);
-    }
-
-    public boolean paramsEquals(String testValue) {
-        return params != null && params.trim().equals(testValue);
     }
 }

@@ -28,7 +28,7 @@ public abstract class PatcherStageSWF<T extends PatcherStage<?>> extends Patcher
         }
 
         @Override
-        public void execute() throws Exception {
+        public void execute() throws PatcherException {
             List<String> command = new ArrayList<>();
             command.add(bsaBrowserPath + "bsab.exe");
             command.add("--regex");
@@ -50,7 +50,7 @@ public abstract class PatcherStageSWF<T extends PatcherStage<?>> extends Patcher
         }
 
         @Override
-        public void execute() throws Exception {
+        public void execute() throws PatcherException {
             List<String> command = new ArrayList<>();
             command.add(rabcdasmPath + "abcreplace.exe");
             command.add(swfFileName);

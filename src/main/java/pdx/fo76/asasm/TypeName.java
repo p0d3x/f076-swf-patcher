@@ -14,16 +14,14 @@ public class TypeName implements Identifier {
 
     public static Identifier parse(String str) {
         var prefix = str.substring(0, str.indexOf("("));
-        if (prefix.equals("QName")) {
-            return QName.parse(str);
-        } else if (!prefix.equals("TypeName")) {
+        if (!prefix.equals("TypeName")) {
             throw new IllegalArgumentException();
         }
         var args = str.substring(str.indexOf("(") + 1, str.lastIndexOf(")"));
         var qns = args.substring(0, args.indexOf("<"));
         var param = args.substring(args.indexOf("<") + 1, args.lastIndexOf(">"));
         var qn = QName.parse(qns);
-        var qn2 = TypeName.parse(param);
+        var qn2 = Identifier.parse(param);
         return new TypeName(qn, qn2);
     }
 }

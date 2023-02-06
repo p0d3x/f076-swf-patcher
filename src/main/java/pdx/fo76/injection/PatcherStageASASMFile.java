@@ -4,10 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import pdx.fo76.asasm.ASASMReader;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 public abstract class PatcherStageASASMFile<T extends PatcherStageASASMBundle<?>> extends PatcherStageASASMBundle<T> {
@@ -23,7 +23,7 @@ public abstract class PatcherStageASASMFile<T extends PatcherStageASASMBundle<?>
         return this;
     }
 
-    public abstract void execute() throws Exception;
+    public abstract void execute() throws PatcherException;
 
     static class ManipulateClassASM extends PatcherStageASASMFile<PatcherStageASASMBundle<?>> {
         private final String className;
@@ -36,23 +36,27 @@ public abstract class PatcherStageASASMFile<T extends PatcherStageASASMBundle<?>
         }
 
         @Override
-        public void execute() throws Exception {
-            var namespaceDir = namespace != null ? namespace.replace(".", "\\\\") + "\\" : "";
-            String inputFile = String.format("%s/%s%s.class.asasm", asmPath, namespaceDir, className);
-            var sourceFile = buildPath.resolve(inputFile).toFile();
-            List<String> lines = FileUtils.readLines(sourceFile, StandardCharsets.UTF_8);
+        public void execute() throws PatcherException {
+            try {
+                var namespaceDir = namespace != null ? namespace.replace(".", "\\\\") + "\\" : "";
+                String inputFile = String.format("%s/%s%s.class.asasm", asmPath, namespaceDir, className);
+                var sourceFile = buildPath.resolve(inputFile).toFile();
+                List<String> lines = FileUtils.readLines(sourceFile, StandardCharsets.UTF_8);
 
-            var root = ASASMReader.readNode(lines);
-            var classNode = root.getInstructions().get(0);
+                var root = ASASMReader.readTree(lines);
+                var classNode = root.getInstructions().get(0);
 
-            // run manipulations
-            for (ASASMEdit e : edits) {
-                e.execute(this, namespace, className, classNode);
+                // run manipulations
+                for (ASASMEdit e : edits) {
+                    e.execute(this, namespace, className, classNode);
+                }
+
+                // Write the modified text back to the input file
+                var out = classNode.stream(0).toList();
+                FileUtils.writeLines(sourceFile, StandardCharsets.UTF_8.name(), out);
+            } catch (IOException e) {
+                throw new PatcherException("IOException while editing asasm class file: " + e.getMessage(), e);
             }
-
-            // Write the modified text back to the input file
-            var out = classNode.stream(0).toList();
-            FileUtils.writeLines(sourceFile, StandardCharsets.UTF_8.name(), out);
         }
     }
 }

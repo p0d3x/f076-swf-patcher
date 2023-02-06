@@ -2,15 +2,12 @@ package pdx.fo76.asasm.instruction;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import org.apache.commons.lang3.StringUtils;
 import pdx.fo76.asasm.Identifier;
 import pdx.fo76.asasm.QName;
 
-import java.util.stream.Stream;
-
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
-public class TraitSlot extends Node {
+public class TraitSlot extends Trait {
     private Identifier slot;
     private final Integer slotId;
     private final Identifier type;
@@ -18,22 +15,12 @@ public class TraitSlot extends Node {
 
     @Override
     public String toString() {
-        return "trait"
+        return getName()
                 + " slot " + slot
                 + (slotId != null ? " slotid " + slotId : "")
                 + (type != null ? " type " + type : "")
                 + (initValue != null ? " value " + initValue : "")
                 + " end";
-    }
-
-    @Override
-    public Stream<String> stream(int indent) {
-        return Stream.concat(Stream.of(StringUtils.repeat(" ", indent) + this), super.stream(indent));
-    }
-
-    @Override
-    public String getName() {
-        return "trait";
     }
 
     @Override

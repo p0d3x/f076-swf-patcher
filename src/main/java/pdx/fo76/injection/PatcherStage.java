@@ -23,7 +23,7 @@ public abstract class PatcherStage<T extends PatcherStage<?>> {
     protected final Path templatePath;
     protected PatcherStage<?> next;
 
-    public PatcherStage(T parent) {
+    protected PatcherStage(T parent) {
         this.parent = parent;
         this.bsaBrowserPath = parent.bsaBrowserPath;
         this.rabcdasmPath = parent.rabcdasmPath;
@@ -32,24 +32,30 @@ public abstract class PatcherStage<T extends PatcherStage<?>> {
         parent.next = this;
     }
 
-    public abstract void execute() throws Exception;
+    public abstract void execute() throws PatcherException;
 
-    protected static void executeCommand(List<String> command, File directory) throws Exception {
-        log.info("executing: {}", command);
-        ProcessBuilder pb = new ProcessBuilder(command);
-        pb.directory(directory);
-        Process process = pb.start();
+    protected static void executeCommand(List<String> command, File directory) throws PatcherException {
+        try {
+            log.info("executing: {}", command);
+            ProcessBuilder pb = new ProcessBuilder(command);
+            pb.directory(directory);
+            Process process = pb.start();
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            if (!line.isBlank()) {
-                log.info("{}", line);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (!line.isBlank()) {
+                    log.info("{}", line);
+                }
             }
-        }
-        reader.close();
+            reader.close();
 
-        process.waitFor();
+            process.waitFor();
+        } catch (IOException e) {
+            throw new PatcherException("IOException while executing command: " + e.getMessage(), e);
+        } catch (InterruptedException e) {
+            throw new PatcherException("exception while waiting for external process: " + e.getMessage(), e);
+        }
     }
 
     public PatcherStageSWF<PatcherStage<?>> extractSWFFromBA2(Path archivePath, String fileName) {
@@ -103,12 +109,16 @@ public abstract class PatcherStage<T extends PatcherStage<?>> {
         }
 
         @Override
-        public void execute() throws Exception {
-            var outFile = targetDirectory.resolve(sourceFile);
-            Files.deleteIfExists(outFile);
-            Files.createDirectories(outFile.getParent());
-            Files.copy(buildPath.resolve(sourceFile), outFile);
-            log.info("wrote patched SWF file to {}", outFile);
+        public void execute() throws PatcherException {
+            try {
+                var outFile = targetDirectory.resolve(sourceFile);
+                Files.deleteIfExists(outFile);
+                Files.createDirectories(outFile.getParent());
+                Files.copy(buildPath.resolve(sourceFile), outFile);
+                log.info("moved file {} to {}", sourceFile, outFile);
+            } catch (IOException e) {
+                throw new PatcherException("IOException while moving file: " + e.getMessage(), e);
+            }
         }
     }
 }

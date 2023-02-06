@@ -50,10 +50,7 @@ public class Main {
                 .extractABC()
                 .disassembleABC();
 
-        patchConfig.getEdits().entrySet().stream()
-                .map()
         if (!patchConfig.getEdits().isEmpty()) {
-
             PatcherStageASASMFile<PatcherStageASASMBundle<?>> curStage = null;
             for (var edit : patchConfig.getEdits().entrySet()) {
 
@@ -65,7 +62,6 @@ public class Main {
                 }
                 applyEdit(curStage, edit, className);
             }
-
             abcStage = curStage.assembleABC();
         }
 

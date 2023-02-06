@@ -1,20 +1,10 @@
 package pdx.fo76.asasm.instruction;
 
-import lombok.Value;
+import lombok.EqualsAndHashCode;
 
-import java.util.stream.Stream;
-
-@Value
-public class Label extends Node {
-    String name;
-
-    @Override
-    public String toString() {
-        return name;
-    }
-
-    @Override
-    public Stream<String> stream(int indent) {
-        return Stream.concat(Stream.of(name), super.stream(indent));
+@EqualsAndHashCode(callSuper = true)
+public class Label extends IndentedSimpleNode {
+    public Label() {
+        super("label");
     }
 }

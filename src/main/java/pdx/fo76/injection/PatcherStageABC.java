@@ -2,6 +2,7 @@ package pdx.fo76.injection;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public abstract class PatcherStageABC<T extends PatcherStageSWF<?>> extends Patc
         }
 
         @Override
-        public void execute() throws Exception {
+        public void execute() throws PatcherException {
             List<String> command = new ArrayList<>();
             command.add(rabcdasmPath + "abcexport.exe");
             command.add(swfFileName);
@@ -45,19 +46,23 @@ public abstract class PatcherStageABC<T extends PatcherStageSWF<?>> extends Patc
         }
 
         @Override
-        public void execute() throws Exception {
-            var path = Path.of(parent.asmPath);
-            var fname = path.getFileName().toString();
-            var asmFile = path + "/" + fname + ".main.asasm";
-            List<String> command = new ArrayList<>();
-            command.add(rabcdasmPath + "rabcasm.exe");
-            command.add(asmFile);
-            executeCommand(command, buildPath.toFile());
-            var sourceFile = buildPath.resolve(Path.of(parent.asmPath, fname + ".main.abc"));
-            var targetFile = buildPath.resolve(parent.asmPath + ".abc.patched");
-            Files.createDirectories(targetFile.getParent());
-            Files.copy(sourceFile, targetFile);
-            log.info("assembled patched ABC from {} into {}", asmFile, targetFile);
+        public void execute() throws PatcherException {
+            try {
+                var path = Path.of(parent.asmPath);
+                var fname = path.getFileName().toString();
+                var asmFile = path + "/" + fname + ".main.asasm";
+                List<String> command = new ArrayList<>();
+                command.add(rabcdasmPath + "rabcasm.exe");
+                command.add(asmFile);
+                executeCommand(command, buildPath.toFile());
+                var sourceFile = buildPath.resolve(Path.of(parent.asmPath, fname + ".main.abc"));
+                var targetFile = buildPath.resolve(parent.asmPath + ".abc.patched");
+                Files.createDirectories(targetFile.getParent());
+                Files.copy(sourceFile, targetFile);
+                log.info("assembled patched ABC from {} into {}", asmFile, targetFile);
+            } catch (IOException e) {
+                throw new PatcherException("IOException during assembly: " + e.getMessage(), e);
+            }
         }
     }
 }
