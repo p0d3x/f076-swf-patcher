@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class ParamName extends Indented1ParamNode<StringLiteral> {
 
-    public ParamName(String param) {
-        super("paramname", new StringLiteral(param));
+    public ParamName(StringLiteral param) {
+        super("paramname", param);
     }
 }

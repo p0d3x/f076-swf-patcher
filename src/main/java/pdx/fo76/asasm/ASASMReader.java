@@ -23,54 +23,48 @@ public class ASASMReader {
     }
 
     public static Node readTree(List<String> lines) {
-        return readTree(lines, new RootNode());
+        return readTree(new RootNode(), lines);
     }
 
-    private static Node readTree(List<String> lines, Node parent) {
+    private static Node readTree(Node root, List<String> lines) {
         for (int i = 0; i < lines.size();) {
             var lineClean = lines.get(i).strip();
             var isEnd = lineClean.startsWith("end");
             if (isEnd) {
-                parent.add(new End(lineClean.substring(4)));
+                root.add(new End(lineClean.substring(4)));
                 break;
             }
-            String line = lines.get(i);
-            if (line.isBlank()) {
-                parent.add(new BlankLine());
+            if (lineClean.isBlank()) {
+                root.add(new BlankLine());
                 i++;
-            } else if (line.startsWith("L")) {
-                parent.add(new LineLabel(lineClean));
+            } else if (lineClean.startsWith("L")) {
+                root.add(new LineLabel(lineClean));
                 i++;
             } else {
                 var parts = lineClean.split(" ", 2);
-                var linesRemaining = lines.subList(i + 1, lines.size());
-                i += readChildren(linesRemaining, parent, parts);
+                var next = readNext(lines.subList(i + 1, lines.size()), parts);
+                root.add(next);
+                i += next.length();
             }
         }
-        return parent;
-    }
-
-    private static int readChildren(List<String> lines, Node result, String[] parts) {
-        var next = readNext(lines, parts);
-        result.add(next);
-        return next.length();
+        return root;
     }
 
     private static Node readNext(List<String> lines, String[] parts) {
-        var keyword = parts[0];
+        var token = parts[0];
         var args = parts.length == 2 ? parts[1].strip() : "";
-        return switch (keyword) {
-            case "class" -> readTree(lines, new ASClass());
+        return switch (token) {
+            case "class" -> readTree(new ASClass(), lines);
             case "refid" -> new RefId(readStringLiteral(args));
             case "extends" -> new Extends(QName.parse(readIdentifier(args)));
             case "protectedns" -> new ProtectedNS(Namespace.parse(args));
             case "flag" -> new Flag(args);
             case "trait" -> readTrait(lines, args);
-            case "instance" -> readTree(lines, new Instance(QName.parse(readIdentifier(args))));
-            case "iinit" -> readTree(lines, new Iinit());
+            case "instance" -> readTree(new Instance(QName.parse(readIdentifier(args))), lines);
+            case "iinit" -> readTree(new Iinit(), lines);
             case "name" -> new Name(readStringLiteral(args));
-            case "body" -> readTree(lines, new Body());
-            case "code" -> readTree(lines, new Code());
+            case "body" -> readTree(new Body(), lines);
+            case "code" -> readTree(new Code(), lines);
             case "dup" -> new Dup();
             case "newactivation" -> new NewActivation();
             case "pushscope" -> new PushScope();
@@ -81,8 +75,8 @@ public class ASASMReader {
             case "localcount" -> new LocalCount(Integer.parseInt(args));
             case "initscopedepth" -> new InitScopeDepth(Integer.parseInt(args));
             case "maxscopedepth" -> new MaxScopeDepth(Integer.parseInt(args));
-            case "method" -> readTree(lines, new Method());
-            case "cinit" -> readTree(lines, readNotImplemented(keyword, args));
+            case "method" -> readTree(new Method(), lines);
+            case "cinit" -> readTree(readNotImplemented(token, args), lines);
             case "callpropvoid" -> readCallPropVoid(args);
             case "constructprop" -> readConstructProp(args);
             case "findpropstrict" -> new FindPropStrict(Identifier.parse(readIdentifier(args)));
@@ -145,7 +139,7 @@ public class ASASMReader {
             case "optional" -> new OptionalParam(args);
             case "kill" -> new Kill(Integer.parseInt(args));
             case ";" -> new Comment(args);
-            default -> readNotImplemented(keyword, parts.length == 2 ? parts[1] : "");
+            default -> readNotImplemented(token, args);
         };
     }
 
@@ -165,11 +159,8 @@ public class ASASMReader {
         return new Debug(arg1, arg2, arg3, arg4);
     }
 
-    private static String readStringLiteral(String arg) {
-        if (arg.equals("null")) {
-            return null;
-        }
-        return arg.substring(1, arg.length() - 1);
+    private static StringLiteral readStringLiteral(String arg) {
+        return new StringLiteral(arg.equals("null") ? null : arg.substring(1, arg.length() - 1));
     }
 
     private static NotImplemented readNotImplemented(String keyword, String args) {
@@ -191,9 +182,9 @@ public class ASASMReader {
     private static Node readTrait(List<String> lines, String args) {
         var rest = args.split(" ", 2);
         return switch (rest[0]) {
-            case "getter" -> readTree(lines, parseTraitGetter(args));
-            case "setter" -> readTree(lines, parseTraitSetter(args));
-            case "method" -> readTree(lines, parseTraitMethod(args));
+            case "getter" -> readTree(parseTraitGetter(args), lines);
+            case "setter" -> readTree(parseTraitSetter(args), lines);
+            case "method" -> readTree(parseTraitMethod(args), lines);
             case "slot" -> parseTraitSlot(args);
             case "const" -> parseTraitConst(args);
             default -> new NotImplemented("trait", args);

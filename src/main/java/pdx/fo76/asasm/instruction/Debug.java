@@ -11,10 +11,10 @@ public class Debug extends IndentedSimpleNode {
     private int param3;
     private int param4;
 
-    public Debug(int p1, String p2, int p3, int p4) {
+    public Debug(int p1, StringLiteral p2, int p3, int p4) {
         super("debug");
         this.param1 = p1;
-        this.param2 = new StringLiteral(p2);
+        this.param2 = p2;
         this.param3 = p3;
         this.param4 = p4;
         this.paramIndent = 20;
