@@ -189,6 +189,54 @@ public interface Syntax {
     }
 
     @EqualsAndHashCode(callSuper = true)
+    class OptionalS extends CompoundSyntax {
+
+        public OptionalS(List<Syntax> rest, int pad) {
+            super(rest, pad);
+        }
+
+        public static OptionalS of(Syntax syntax, int pad) {
+            return new OptionalS(List.of(syntax), pad);
+        }
+    }
+
+    @EqualsAndHashCode(callSuper = true)
+    class ValueS extends CompoundSyntax {
+
+        public ValueS(List<Syntax> rest, int pad) {
+            super(rest, pad);
+        }
+
+        public static ValueS of(Syntax syntax, int pad) {
+            return new ValueS(List.of(syntax), pad);
+        }
+    }
+
+    @EqualsAndHashCode(callSuper = true)
+    class ParamS extends CompoundSyntax {
+
+        public ParamS(List<Syntax> rest, int pad) {
+            super(rest, pad);
+        }
+
+        public static ParamS of(Syntax syntax, int pad) {
+            return new ParamS(List.of(syntax), pad);
+        }
+    }
+
+    @EqualsAndHashCode(callSuper = true)
+    class ReturnsS extends CompoundSyntax {
+
+        public ReturnsS(List<Syntax> rest, int pad) {
+            super(rest, pad);
+        }
+
+        public static ReturnsS of(Syntax syntax, int pad) {
+            return new ReturnsS(List.of(syntax), pad);
+        }
+    }
+
+    @EqualsAndHashCode(callSuper = true)
     class NamespaceS extends SimpleSyntax {
 
         @Getter

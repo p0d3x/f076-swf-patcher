@@ -92,8 +92,8 @@ public interface Parser<T extends Syntax> {
                         .skip(END, COMMENT));
     }
 
-    static Parser<? extends Syntax> optionalValue() {
-        return of(OPTIONAL).thenExact(valueLiteral());
+    static Parser<Syntax.OptionalS> optionalValue() {
+        return of(Syntax.OptionalS::of, peek(OPTIONAL), valueLiteral());
     }
 
     static Parser<Syntax.NameS> name() {
@@ -158,8 +158,8 @@ public interface Parser<T extends Syntax> {
                 .thenExact(END, COMMENT);
     }
 
-    static Parser<? extends Syntax> value() {
-        return of(VALUE).thenExact(valueLiteral());
+    static Parser<Syntax.ValueS> value() {
+        return of(Syntax.ValueS::of, peek(VALUE), valueLiteral());
     }
 
     static Parser<? extends Syntax> valueLiteral() {
@@ -248,12 +248,12 @@ public interface Parser<T extends Syntax> {
         return of(PARAM_NAME).thenExact(of(STRING_LITERAL).or(of(NULL_LITERAL)));
     }
 
-    static Parser<? extends Syntax> param() {
-        return of(PARAM).thenExact(type().or(of(NULL_LITERAL)));
+    static Parser<Syntax.ParamS> param() {
+        return of(Syntax.ParamS::of, peek(PARAM), type().or(of(NULL_LITERAL)));
     }
 
-    static Parser<? extends Syntax> returns() {
-        return of(RETURNS).thenExact(type());
+    static Parser<Syntax.ReturnsS> returns() {
+        return of(Syntax.ReturnsS::of, peek(RETURNS), type());
     }
 
     static Parser<? extends Syntax> code() {
