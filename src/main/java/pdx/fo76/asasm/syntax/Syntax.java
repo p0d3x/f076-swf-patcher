@@ -3,7 +3,6 @@ package pdx.fo76.asasm.syntax;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import pdx.fo76.asasm.token.ParsedToken;
 
 import java.util.List;
@@ -20,11 +19,11 @@ public interface Syntax {
         return new SimpleSyntax(tokens, pad);
     }
 
-    static Syntax multi(List<Syntax> rest) {
+    static Syntax multi(List<? extends Syntax> rest) {
         return multi(rest, 0);
     }
 
-    static Syntax multi(List<Syntax> rest, int pad) {
+    static Syntax multi(List<? extends Syntax> rest, int pad) {
         return new CompoundSyntax(rest, pad);
     }
 
@@ -51,7 +50,8 @@ public interface Syntax {
     @EqualsAndHashCode
     @AllArgsConstructor
     class CompoundSyntax implements Syntax {
-        private final List<Syntax> rest;
+        @Getter
+        private final List<? extends Syntax> rest;
         int pad;
 
         @Override
@@ -68,11 +68,11 @@ public interface Syntax {
 
     @EqualsAndHashCode(callSuper = true)
     class ClassS extends CompoundSyntax {
-        private Syntax contents;
+        private final List<? extends Syntax> contents;
 
-        public ClassS(List<Syntax> rest, int pad) {
+        public ClassS(List<? extends Syntax> rest, int pad) {
             super(rest, pad);
-            this.contents = rest.get(0);
+            this.contents = ((CompoundSyntax) rest.get(0)).getRest();
         }
 
         public static ClassS of(Syntax syntax, int pad) {
@@ -81,9 +81,21 @@ public interface Syntax {
     }
 
     @EqualsAndHashCode(callSuper = true)
+    class ClassBodyS extends CompoundSyntax {
+
+        public ClassBodyS(List<? extends Syntax> rest, int pad) {
+            super(rest, pad);
+        }
+
+        public static ClassBodyS of(List<? extends Syntax> syntax) {
+            return new ClassBodyS(syntax, 0);
+        }
+    }
+
+    @EqualsAndHashCode(callSuper = true)
     class InstanceS extends CompoundSyntax {
 
-        public InstanceS(List<Syntax> rest, int pad) {
+        public InstanceS(List<? extends Syntax> rest, int pad) {
             super(rest, pad);
         }
 
@@ -95,7 +107,7 @@ public interface Syntax {
     @EqualsAndHashCode(callSuper = true)
     class ScriptS extends CompoundSyntax {
 
-        public ScriptS(List<Syntax> rest, int pad) {
+        public ScriptS(List<? extends Syntax> rest, int pad) {
             super(rest, pad);
         }
 
@@ -107,7 +119,7 @@ public interface Syntax {
     @EqualsAndHashCode(callSuper = true)
     class MethodS extends CompoundSyntax {
 
-        public MethodS(List<Syntax> rest, int pad) {
+        public MethodS(List<? extends Syntax> rest, int pad) {
             super(rest, pad);
         }
 
@@ -117,9 +129,21 @@ public interface Syntax {
     }
 
     @EqualsAndHashCode(callSuper = true)
+    class MethodBodyS extends CompoundSyntax {
+
+        public MethodBodyS(List<? extends Syntax> rest, int pad) {
+            super(rest, pad);
+        }
+
+        public static MethodBodyS of(List<? extends Syntax> syntax) {
+            return new MethodBodyS(syntax, 0);
+        }
+    }
+
+    @EqualsAndHashCode(callSuper = true)
     class QNameS extends CompoundSyntax {
 
-        public QNameS(List<Syntax> rest, int pad) {
+        public QNameS(List<? extends Syntax> rest, int pad) {
             super(rest, pad);
         }
 
@@ -189,7 +213,7 @@ public interface Syntax {
     class SingleParamSyntax<T> extends SimpleSyntax {
 
         @Getter
-        private final T value;
+        protected final T value;
 
         public SingleParamSyntax(List<ParsedToken> rest, int pad, T param) {
             super(rest, pad);
@@ -207,6 +231,11 @@ public interface Syntax {
         public static RefIdS of(List<ParsedToken> tokens, int pad) {
             return new RefIdS(tokens, pad);
         }
+
+        @Override
+        public String toString() {
+            return "refid " + value;
+        }
     }
 
     @EqualsAndHashCode(callSuper = true)
@@ -217,6 +246,11 @@ public interface Syntax {
 
         public static DispIdS of(List<ParsedToken> tokens, int pad) {
             return new DispIdS(tokens, pad);
+        }
+
+        @Override
+        public String toString() {
+            return "dispid " + value;
         }
     }
 
@@ -229,6 +263,11 @@ public interface Syntax {
         public static NameS of(List<ParsedToken> tokens, int pad) {
             return new NameS(tokens, pad);
         }
+
+        @Override
+        public String toString() {
+            return "name " + value;
+        }
     }
 
     @EqualsAndHashCode(callSuper = true)
@@ -239,6 +278,11 @@ public interface Syntax {
 
         public static RTQNameS of(List<ParsedToken> tokens, int pad) {
             return new RTQNameS(tokens, pad);
+        }
+
+        @Override
+        public String toString() {
+            return "RTQName(" + value + ")";
         }
     }
 

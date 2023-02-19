@@ -6,19 +6,19 @@ import pdx.fo76.asasm.token.Token;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 import static pdx.fo76.asasm.token.Token.*;
 
 public interface Parser<T extends Syntax> {
 
     static Parser<Syntax.ScriptS> script() {
-        return of(SCRIPT)
-                .atLeastOnce(sinit(), trait())
-                .transform(of(END, COMMENT), Syntax.ScriptS::of);
+        return of(Syntax.ScriptS::of, peek(SCRIPT), multi(sinit(), trait()).skip(END, COMMENT));
     }
 
     static Parser<Syntax.ClassS> clazz() {
-        return of(Syntax.ClassS::of, peek(CLASS), multi(refid(), instance(), cinit(), trait()).skip(END, COMMENT));
+        return of(Syntax.ClassS::of, peek(CLASS), multiCollect(Syntax.ClassBodyS::of, refid(), instance(), cinit(), trait())
+                .skip(END, COMMENT));
     }
     
     static Parser<Syntax.RefIdS> refid() {
@@ -71,30 +71,28 @@ public interface Parser<T extends Syntax> {
     }
     
     static Parser<Syntax.MethodS> iinit() {
-        return of(IINIT)
-                .atLeastOnce(name(), refid(), param(), paramname(), returns(), flag(), body(), optionalValue())
-                .transform(of(END, COMMENT), Syntax.MethodS::of);
+        return methodByPeek(IINIT);
     }
 
     static Parser<Syntax.MethodS> cinit() {
-        return of(CINIT)
-                .atLeastOnce(name(), refid(), param(), paramname(), returns(), flag(), body(), optionalValue())
-                .transform(of(END, COMMENT), Syntax.MethodS::of);
+        return methodByPeek(CINIT);
     }
 
     static Parser<Syntax.MethodS> sinit() {
-        return of(SINIT)
-                .atLeastOnce(name(), refid(), param(), paramname(), returns(), flag(), body(), optionalValue())
-                .transform(of(END, COMMENT), Syntax.MethodS::of);
+        return methodByPeek(SINIT);
     }
 
     static Parser<Syntax.MethodS> method() {
-        return of(METHOD)
-                .atLeastOnce(name(), refid(), param(), paramname(), returns(), flag(), body(), optionalValue())
-                .transform(of(END, COMMENT), Syntax.MethodS::of);
+        return methodByPeek(METHOD);
     }
 
-    static Parser<Syntax> optionalValue() {
+    private static Parser<Syntax.MethodS> methodByPeek(Token first) {
+        return of(Syntax.MethodS::of, peek(first),
+                multiCollect(Syntax.MethodBodyS::of, name(), refid(), param(), paramname(), returns(), flag(), body(), optionalValue())
+                        .skip(END, COMMENT));
+    }
+
+    static Parser<? extends Syntax> optionalValue() {
         return of(OPTIONAL).thenExact(valueLiteral());
     }
 
@@ -102,7 +100,7 @@ public interface Parser<T extends Syntax> {
         return exact(Syntax.NameS::of, NAME, STRING_LITERAL);
     }
 
-    static Parser<Syntax> trait() {
+    static Parser<? extends Syntax> trait() {
         return of(TRAIT)
                 .thenExact(constT()
                        .or(slotT())
@@ -113,7 +111,7 @@ public interface Parser<T extends Syntax> {
                 );
     }
 
-    static Parser<Syntax> constT() {
+    static Parser<? extends Syntax> constT() {
         return of(CONST).thenExact(qName())
                 .optional(SLOT_ID, INT_LITERAL)
                 .optional(of(TYPE).thenExact(type()))
@@ -121,7 +119,7 @@ public interface Parser<T extends Syntax> {
                 .thenExact(END);
     }
 
-    static Parser<Syntax> slotT() {
+    static Parser<? extends Syntax> slotT() {
         return of(SLOT).thenExact(qName())
                 .optional(SLOT_ID, INT_LITERAL)
                 .optional(of(TYPE).thenExact(type()))
@@ -129,7 +127,7 @@ public interface Parser<T extends Syntax> {
                 .thenExact(END);
     }
 
-    static Parser<Syntax> methodT() {
+    static Parser<? extends Syntax> methodT() {
         return of(METHOD).thenExact(qName())
                 .optional(flag())
                 .optional(dispid())
@@ -137,7 +135,7 @@ public interface Parser<T extends Syntax> {
                 .thenExact(END, COMMENT);
     }
 
-    static Parser<Syntax> getterT() {
+    static Parser<? extends Syntax> getterT() {
         return of(GETTER).thenExact(qName())
                 .optional(flag())
                 .optional(dispid())
@@ -145,7 +143,7 @@ public interface Parser<T extends Syntax> {
                 .thenExact(END, COMMENT);
     }
 
-    static Parser<Syntax> setterT() {
+    static Parser<? extends Syntax> setterT() {
         return of(SETTER).thenExact(qName())
                 .optional(flag())
                 .optional(dispid())
@@ -153,18 +151,18 @@ public interface Parser<T extends Syntax> {
                 .thenExact(END, COMMENT);
     }
 
-    static Parser<Syntax> classT() {
+    static Parser<? extends Syntax> classT() {
         return of(CLASS).thenExact(qName())
                 .optional(of(SLOT_ID, INT_LITERAL))
                 .thenExact(HASH_INCLUDE, STRING_LITERAL)
                 .thenExact(END, COMMENT);
     }
 
-    static Parser<Syntax> value() {
+    static Parser<? extends Syntax> value() {
         return of(VALUE).thenExact(valueLiteral());
     }
 
-    static Parser<Syntax> valueLiteral() {
+    static Parser<? extends Syntax> valueLiteral() {
         return oneOf(
                 valueDouble(),
                 valueInteger(),
@@ -179,7 +177,7 @@ public interface Parser<T extends Syntax> {
         return of(VALUE_NULL, OPEN_P, CLOSE_P);
     }
 
-    static Parser<Syntax> valueBoolean() {
+    static Parser<? extends Syntax> valueBoolean() {
         return oneOf(VALUE_TRUE, VALUE_FALSE).thenExact(OPEN_P, CLOSE_P);
     }
 
@@ -187,17 +185,17 @@ public interface Parser<T extends Syntax> {
         return of(VALUE_INTEGER, OPEN_P, INT_LITERAL, CLOSE_P);
     }
 
-    static Parser<Syntax> valueDouble() {
+    static Parser<? extends Syntax> valueDouble() {
         return of(VALUE_DOUBLE, OPEN_P)
                 .thenExact(oneOf(FLOAT_LITERAL, INT_LITERAL, NAN_LITERAL))
                 .thenExact(of(CLOSE_P));
     }
 
-    static Parser<Syntax> valueUtf8() {
+    static Parser<? extends Syntax> valueUtf8() {
         return of(VALUE_UTF8, OPEN_P, STRING_LITERAL, CLOSE_P);
     }
 
-    static Parser<Syntax> valueNamespace() {
+    static Parser<? extends Syntax> valueNamespace() {
         return of(NAMESPACE, OPEN_P).thenExact(namespace()).thenExact(CLOSE_P);
     }
 
@@ -228,7 +226,7 @@ public interface Parser<T extends Syntax> {
                 );
     }
 
-    static Parser<Syntax> body() {
+    static Parser<? extends Syntax> body() {
         return of(BODY)
                 .atLeastOnce(exact(Syntax.MaxStackS::of, MAX_STACK, INT_LITERAL),
                         exact(Syntax.LocalCountS::of, LOCAL_COUNT, INT_LITERAL),
@@ -240,25 +238,25 @@ public interface Parser<T extends Syntax> {
                 .thenExact(END, COMMENT);
     }
 
-    static Parser<Syntax> tryFromTo() {
+    static Parser<? extends Syntax> tryFromTo() {
         return of(TRY, FROM, JUMP_LABEL, TO, JUMP_LABEL, TARGET, JUMP_LABEL, TYPE)
                 .thenExact(qName()).thenExact(of(NAME)).thenExact(qName())
                 .thenExact(END);
     }
 
-    static Parser<Syntax> paramname() {
+    static Parser<? extends Syntax> paramname() {
         return of(PARAM_NAME).thenExact(of(STRING_LITERAL).or(of(NULL_LITERAL)));
     }
 
-    static Parser<Syntax> param() {
+    static Parser<? extends Syntax> param() {
         return of(PARAM).thenExact(type().or(of(NULL_LITERAL)));
     }
 
-    static Parser<Syntax> returns() {
+    static Parser<? extends Syntax> returns() {
         return of(RETURNS).thenExact(type());
     }
 
-    static Parser<Syntax> code() {
+    static Parser<? extends Syntax> code() {
         return of(CODE).thenExact(more(instructions())).thenExact(END, COMMENT);
     }
 
@@ -384,9 +382,9 @@ public interface Parser<T extends Syntax> {
                 ;
     }
 
-    Either<Syntax, ParseStop> parse(List<ParsedToken> tokens, int pos);
+    Either<T, ParseStop> parse(List<ParsedToken> tokens, int pos);
 
-    default Parser<Syntax> skip(Token... sequence) {
+    default Parser<T> skip(Token... sequence) {
         return (tokens, pos) -> {
             var first = parse(tokens, pos);
             if (first.isRight()) {
@@ -396,19 +394,19 @@ public interface Parser<T extends Syntax> {
             if (!peek.matches(tokens, pos + first.left().getLength())) {
                 return Either.right(new ParseStop(pos + first.left().getLength()));
             }
-            return Either.left(first.left().pad(peek.getLength()));
+            return Either.left((T) first.left().pad(peek.getLength()));
         };
     }
 
-    default Parser<Syntax> thenExact(Token... options) {
+    default Parser<? extends Syntax> thenExact(Token... options) {
         return atLeastOnce(of(options));
     }
 
-    default Parser<Syntax> atLeastOnce(Parser<? extends Syntax>... options) {
+    default Parser<? extends Syntax> atLeastOnce(Parser<? extends Syntax>... options) {
         return (tokens, pos) -> {
-            var first = parse(tokens, pos);
+            Either<? extends Syntax, ParseStop> first = parse(tokens, pos);
             if (first.isRight()) {
-                return first;
+                return (Either<Syntax, ParseStop>) first;
             }
             var cur = pos + first.left().getLength();
             var result = new ArrayList<Syntax>();
@@ -433,11 +431,16 @@ public interface Parser<T extends Syntax> {
         };
     }
 
-    default Parser<Syntax> thenExact(Parser<? extends Syntax> required) {
+    default Parser<? extends Syntax> thenExact(Parser<? extends Syntax> required) {
         return atLeastOnce(required);
     }
 
-    static Parser<Syntax> multi(Parser<? extends Syntax>... options) {
+    static Parser<? extends Syntax> multi(Parser<? extends Syntax>... options) {
+        return multiCollect(Syntax::multi, options);
+    }
+
+    static <T extends Syntax> Parser<T> multiCollect(Function<List<? extends Syntax>, T> collector,
+                                              Parser<? extends Syntax>... options) {
         return (tokens, pos) -> {
             var cur = pos;
             var bestDepth = pos;
@@ -457,22 +460,7 @@ public interface Parser<T extends Syntax> {
             if (result.isEmpty()) {
                 return Either.right(new ParseStop(bestDepth));
             }
-            return Either.left(Syntax.multi(result));
-        };
-    }
-
-    default <V extends Syntax> Parser<V> transform(Parser<Syntax> peek, Transformer<Syntax, V> transformer) {
-        return (tokens, pos) -> {
-            var first = parse(tokens, pos);
-            if (first.isRight()) {
-                return first;
-            }
-            var cur = pos + first.left().getLength();
-            var peekResult = peek.parse(tokens, cur);
-            if (peekResult.isRight()) {
-                return peekResult;
-            }
-            return Either.left(transformer.transform(first.left(), peekResult.left().getLength()));
+            return Either.left(collector.apply(result));
         };
     }
 
@@ -480,35 +468,35 @@ public interface Parser<T extends Syntax> {
         return (tokens, pos) -> {
             var first = parse(tokens, pos);
             if (first.isLeft()) {
-                return first;
+                return (Either<Syntax, ParseStop>) first;
             }
             var second = other.parse(tokens, pos);
             if (second.isLeft()) {
-                return second;
+                return (Either<Syntax, ParseStop>) second;
             }
-            return first.right().getPosition() >= second.right().getPosition() ? first : second;
+            return (Either<Syntax, ParseStop>) (first.right().getPosition() >= second.right().getPosition() ? first : second);
         };
     }
 
-    default Parser<Syntax> optional(Token... tokens) {
+    default Parser<? extends Syntax> optional(Token... tokens) {
         return optional(of(tokens));
     }
 
-    default Parser<Syntax> optional(Parser<? extends Syntax> optional) {
+    default Parser<? extends Syntax> optional(Parser<? extends Syntax> optional) {
         return (tokens, pos) -> {
             var first = parse(tokens, pos);
             if (first.isRight()) {
-                return first;
+                return (Either<Syntax, ParseStop>) first;
             }
             var second = optional.parse(tokens, pos + first.left().getLength());
             if (second.isRight()) {
-                return first;
+                return (Either<Syntax, ParseStop>) first;
             }
             return Either.left(Syntax.multi(List.of(first.left(), second.left())));
         };
     }
 
-    static <T extends Syntax> Parser<T> of(Transformer<Syntax, T> transform, Peek peek, Parser<? extends Syntax> then) {
+    static <T extends Syntax, V extends Syntax> Parser<T> of(Transformer<V, T> transform, Peek peek, Parser<V> then) {
         return (tokens, pos) -> {
             if (!peek.matches(tokens, pos)) {
                 return Either.right(new ParseStop(pos));
@@ -516,7 +504,7 @@ public interface Parser<T extends Syntax> {
             pos += peek.getLength();
             var result = then.parse(tokens, pos);
             if (result.isRight()) {
-                return result;
+                return (Either<T, ParseStop>) result;
             }
             return Either.left(transform.transform(result.left(), peek.getLength()));
         };
@@ -569,7 +557,7 @@ public interface Parser<T extends Syntax> {
             var start = pos + peek.getLength();
             var result = then.parse(tokens, start);
             if (result.isRight()) {
-                return result;
+                return (Either<T, ParseStop>) result;
             }
             var len = result.left().getLength();
             return Either.left(transform.transform(tokens.subList(start, start + len), peek.getLength()));
@@ -584,7 +572,7 @@ public interface Parser<T extends Syntax> {
         return (tokens, pos) -> {
             var first = parser.parse(tokens, pos);
             if (first.isRight()) {
-                return first;
+                return (Either<Syntax, ParseStop>) first;
             }
             var cur = pos + first.left().getLength();
             var result = new ArrayList<Syntax>();
@@ -609,13 +597,13 @@ public interface Parser<T extends Syntax> {
         return ofMultiThenExact(Syntax::of, Arrays.asList(tokens), List.of());
     }
 
-    static Parser<Syntax> oneOf(Parser<? extends Syntax>... parsers) {
+    static Parser<? extends Syntax> oneOf(Parser<? extends Syntax>... parsers) {
         return (tokens, pos) -> {
             var bestPos = pos;
             for (Parser<? extends Syntax> parser : parsers) {
                 var result = parser.parse(tokens, pos);
                 if (result.isLeft()) {
-                    return result;
+                    return (Either<Syntax, ParseStop>) result;
                 } else {
                     bestPos = Math.max(result.right().getPosition(), bestPos);
                 }
