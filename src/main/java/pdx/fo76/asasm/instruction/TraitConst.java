@@ -2,8 +2,6 @@ package pdx.fo76.asasm.instruction;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import pdx.fo76.asasm.Identifier;
-import pdx.fo76.asasm.QName;
 
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor

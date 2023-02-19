@@ -2,7 +2,6 @@ package pdx.fo76.asasm.instruction;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import pdx.fo76.asasm.QName;
 
 import java.util.List;
 import java.util.stream.Collectors;

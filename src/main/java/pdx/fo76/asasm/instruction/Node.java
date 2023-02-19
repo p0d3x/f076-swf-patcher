@@ -1,8 +1,6 @@
 package pdx.fo76.asasm.instruction;
 
 import lombok.Getter;
-import pdx.fo76.asasm.QName;
-import pdx.fo76.injection.EditException;
 
 import java.util.ArrayList;
 import java.util.Arrays;

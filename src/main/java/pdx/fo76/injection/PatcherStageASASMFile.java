@@ -2,7 +2,7 @@ package pdx.fo76.injection;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import pdx.fo76.asasm.ASASMReader;
+import pdx.fo76.asasm.instruction.InstructionReader;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -43,7 +43,7 @@ public abstract class PatcherStageASASMFile<T extends PatcherStageASASMBundle<?>
                 var sourceFile = buildPath.resolve(inputFile).toFile();
                 List<String> lines = FileUtils.readLines(sourceFile, StandardCharsets.UTF_8);
 
-                var root = ASASMReader.readTree(lines);
+                var root = InstructionReader.readTree(lines);
                 var classNode = root.getInstructions().get(0);
 
                 // run manipulations

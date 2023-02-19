@@ -1,9 +1,6 @@
-package pdx.fo76.asasm;
+package pdx.fo76.asasm.instruction;
 
 import lombok.Value;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Value
 public class RTQName implements Identifier {

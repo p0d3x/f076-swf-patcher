@@ -1,4 +1,4 @@
-package pdx.fo76.asasm;
+package pdx.fo76.asasm.instruction;
 
 import lombok.extern.slf4j.Slf4j;
 import pdx.fo76.asasm.instruction.*;
@@ -11,9 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-public class ASASMReader {
-
-    private ASASMReader() {}
+public class InstructionReader {
 
     public static Node readNodeFromTemplate(Path sourcePath, String className) throws IOException {
         try (var stream = Files.lines(sourcePath, StandardCharsets.UTF_8)) {
@@ -143,11 +141,49 @@ public class ASASMReader {
         };
     }
 
-    private static CallProperty readCallProperty(String arg) {
-        var qNameStr = readIdentifier(arg);
-        var arg2Str = arg.substring(qNameStr.length() + 1).strip();
-        var qName = Identifier.parse(qNameStr);
-        return new CallProperty(qName, Integer.parseInt(arg2Str));
+    private static String readTypeName(String str) {
+        var mName = str.substring(0, str.indexOf("("));
+        if (mName.equals("TypeName")) {
+            return str.substring(0, str.lastIndexOf(">") + 2);
+        } else if (mName.equals("QName")) {
+            return readIdentifier(str);
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private static String readIdentifier(String str) {
+        if (str.equals("null")) {
+            return null;
+        }
+        int o = 0;
+        int end = -1;
+        if (str.indexOf('(') == -1) {
+            throw new IllegalArgumentException();
+        }
+        for (int i = str.indexOf('('); i < str.length(); i++) {
+            if (str.charAt(i) == '(') {
+                o++;
+            } else if (str.charAt(i) == ')') {
+                o--;
+            }
+            if (o == 0) {
+                end = i;
+                break;
+            }
+        }
+        if (end == -1) {
+            throw new IllegalArgumentException();
+        }
+        return str.substring(0, end + 1);
+    }
+
+    private static StringLiteral readStringLiteral(String arg) {
+        return new StringLiteral(arg.equals("null") ? null : arg.substring(1, arg.length() - 1));
+    }
+
+    private static NotImplemented readNotImplemented(String keyword, String args) {
+        return new NotImplemented(keyword, args);
     }
 
     private static Debug readDebug(String arg) {
@@ -159,12 +195,10 @@ public class ASASMReader {
         return new Debug(arg1, arg2, arg3, arg4);
     }
 
-    private static StringLiteral readStringLiteral(String arg) {
-        return new StringLiteral(arg.equals("null") ? null : arg.substring(1, arg.length() - 1));
-    }
-
-    private static NotImplemented readNotImplemented(String keyword, String args) {
-        return new NotImplemented(keyword, args);
+    private static CallProperty readCallProperty(String args) {
+        var qName = Identifier.parse(readIdentifier(args));
+        var numArgs = Integer.parseInt(args.substring(args.lastIndexOf(",") + 1).strip());
+        return new CallProperty(qName, numArgs);
     }
 
     private static Node readCallPropVoid(String args) {
@@ -302,31 +336,32 @@ public class ASASMReader {
             throw new IllegalArgumentException();
         }
         var parts = part.split(" ", 2);
-        Identifier slot = null;
-        Integer slotId = null;
-        Identifier type = null;
-        String initValue = null;
+        Slot slot = null;
+        SlotId slotId = null;
+        Type type = null;
+        Value initValue = null;
         parseOpts:
         while (!part.isBlank()) {
             switch (parts[0]) {
                 case "slot":
-                    String qName = readIdentifier(parts[1]);
-                    slot = Identifier.parse(qName);
+                    var qName = readIdentifier(parts[1]);
+                    slot = new Slot(Identifier.parse(qName));
                     part = parts[1].substring(qName.length() + 1);
                     break;
                 case "slotid":
                     var strVal = parts[1].substring(0, parts[1].indexOf(" "));
-                    slotId = Integer.valueOf(strVal);
+                    slotId = new SlotId(Integer.valueOf(strVal));
                     part = parts[1].substring(strVal.length() + 1);
                     break;
                 case "type":
-                    String typeName = readTypeName(parts[1]);
-                    type = Identifier.parse(typeName);
+                    var typeName = readTypeName(parts[1]);
+                    type = new Type(Identifier.parse(typeName));
                     part = parts[1].substring(typeName.length() + 1);
                     break;
                 case "value":
-                    initValue = parts[1].substring(0, parts[1].indexOf(")") + 1);
-                    part = parts[1].substring(initValue.length() + 1);
+                    var initValueStr = parts[1].substring(0, parts[1].indexOf(")") + 1);
+                    initValue = new Value(initValueStr);
+                    part = parts[1].substring(initValueStr.length() + 1);
                     break;
                 case "end":
                     break parseOpts;
@@ -377,42 +412,5 @@ public class ASASMReader {
             parts = part.trim().split(" ", 2);
         }
         return new TraitConst(qName, slotId, type, initValue);
-    }
-
-    private static String readTypeName(String str) {
-        var mName = str.substring(0, str.indexOf("("));
-        if (mName.equals("TypeName")) {
-            return str.substring(0, str.lastIndexOf(">") + 2);
-        } else if (mName.equals("QName")) {
-            return readIdentifier(str);
-        } else {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private static String readIdentifier(String str) {
-        if (str.equals("null")) {
-            return null;
-        }
-        int o = 0;
-        int end = -1;
-        if (str.indexOf('(') == -1) {
-            throw new IllegalArgumentException();
-        }
-        for (int i = str.indexOf('('); i < str.length(); i++) {
-            if (str.charAt(i) == '(') {
-                o++;
-            } else if (str.charAt(i) == ')') {
-                o--;
-            }
-            if (o == 0) {
-                end = i;
-                break;
-            }
-        }
-        if (end == -1) {
-            throw new IllegalArgumentException();
-        }
-        return str.substring(0, end + 1);
     }
 }

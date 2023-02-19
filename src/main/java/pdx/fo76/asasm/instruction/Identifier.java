@@ -1,4 +1,4 @@
-package pdx.fo76.asasm;
+package pdx.fo76.asasm.instruction;
 
 public interface Identifier {
     static Identifier parse(String str) {
