@@ -213,25 +213,25 @@ public enum Token {
         this.tokenizer = tokenizer;
     }
 
-    public ParsedToken read(String line) {
-        return tokenizer.read(this, line);
+    public ParsedToken read(String line, int lineNum, int linePos) {
+        return tokenizer.read(this, line, lineNum, linePos);
     }
 
     static Tokenizer none() {
-        return (t, line) -> null;
+        return (t, line, lineNum, linePos) -> null;
     }
 
     static Tokenizer literal(String value) {
-        return (t, line) -> {
+        return (t, line, lineNum, linePos) -> {
             if (line.startsWith(value)) {
-                return new ParsedToken(t, value);
+                return new ParsedToken(t, value, lineNum, linePos);
             }
             return null;
         };
     }
 
     static Tokenizer stringLiteral() {
-        return (t, line) -> {
+        return (t, line, lineNum, linePos) -> {
             if (!line.startsWith("\"")) {
                 return null;
             }
@@ -241,8 +241,8 @@ public enum Token {
                     escape = true;
                 } else if (escape) {
                     escape = false;
-                } else if (line.charAt(i) == '"' && !escape) {
-                    return new ParsedToken(t, line.substring(0, i + 1));
+                } else if (line.charAt(i) == '"') {
+                    return new ParsedToken(t, line.substring(0, i + 1), lineNum, linePos);
                 }
             }
             return null;
@@ -251,10 +251,10 @@ public enum Token {
 
     static Tokenizer regex(String pattern) {
         var compiled = Pattern.compile("^" + pattern);
-        return (t, line) -> {
+        return (t, line, lineNum, linePos)  -> {
             var matcher = compiled.matcher(line);
             if (matcher.find()) {
-                return new ParsedToken(t, matcher.group());
+                return new ParsedToken(t, matcher.group(), lineNum, linePos);
             }
             return null;
         };

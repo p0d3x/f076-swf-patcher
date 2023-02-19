@@ -13,10 +13,6 @@ public interface Either<S, T> {
         return new Left<>(val);
     }
 
-    static <S, T> Either<S, T> leftPadded(S val, int p) {
-        return new Left<>(val);
-    }
-
     static <S, T> Either<S, T> right(T val) {
         return new Right<>(val);
     }

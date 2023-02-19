@@ -6,4 +6,6 @@ import lombok.Value;
 public class ParsedToken {
     Token token;
     String value;
+    int line;
+    int position;
 }

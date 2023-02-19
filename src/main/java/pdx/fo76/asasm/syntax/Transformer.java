@@ -1,8 +1,8 @@
 package pdx.fo76.asasm.syntax;
 
-public interface Transformer<V> {
-    default V transform(Syntax arg) {
+public interface Transformer<T, V> {
+    default V transform(T arg) {
         return transform(arg, 0);
     }
-    V transform(Syntax arg, int pad);
+    V transform(T arg, int pad);
 }

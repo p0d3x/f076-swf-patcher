@@ -1,5 +1,6 @@
 package pdx.fo76.asasm.syntax;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,11 @@ public interface Syntax {
     int getLength();
 
     static Syntax of(List<ParsedToken> tokens) {
-        return new SimpleSyntax(tokens);
+        return of(tokens, 0);
+    }
+
+    static Syntax of(List<ParsedToken> tokens, int pad) {
+        return new SimpleSyntax(tokens, pad);
     }
 
     static Syntax multi(List<Syntax> rest) {
@@ -23,38 +28,67 @@ public interface Syntax {
         return new CompoundSyntax(rest, pad);
     }
 
+    Syntax pad(int length);
+
     @EqualsAndHashCode
-    @RequiredArgsConstructor
+    @AllArgsConstructor
     class SimpleSyntax implements Syntax {
         private final List<ParsedToken> tokens;
+        int pad;
 
         @Override
         public int getLength() {
-            return tokens.size();
+            return tokens.size() + pad;
+        }
+
+        @Override
+        public Syntax pad(int length) {
+            pad += length;
+            return this;
         }
     }
 
     @EqualsAndHashCode
-    @RequiredArgsConstructor
+    @AllArgsConstructor
     class CompoundSyntax implements Syntax {
         private final List<Syntax> rest;
-        private final int pad;
+        int pad;
 
         @Override
         public int getLength() {
             return rest.stream().mapToInt(Syntax::getLength).sum() + pad;
         }
+
+        @Override
+        public Syntax pad(int length) {
+            pad += length;
+            return this;
+        }
     }
 
     @EqualsAndHashCode(callSuper = true)
     class ClassS extends CompoundSyntax {
+        private Syntax contents;
 
         public ClassS(List<Syntax> rest, int pad) {
             super(rest, pad);
+            this.contents = rest.get(0);
         }
 
-        public static ClassS transform(Syntax syntax, int pad) {
+        public static ClassS of(Syntax syntax, int pad) {
             return new ClassS(List.of(syntax), pad);
+        }
+    }
+
+    @EqualsAndHashCode(callSuper = true)
+    class InstanceS extends CompoundSyntax {
+
+        public InstanceS(List<Syntax> rest, int pad) {
+            super(rest, pad);
+        }
+
+        public static InstanceS of(Syntax syntax, int pad) {
+            return new InstanceS(List.of(syntax), pad);
         }
     }
 
@@ -65,7 +99,7 @@ public interface Syntax {
             super(rest, pad);
         }
 
-        public static ScriptS transform(Syntax syntax, int pad) {
+        public static ScriptS of(Syntax syntax, int pad) {
             return new ScriptS(List.of(syntax), pad);
         }
     }
@@ -77,7 +111,7 @@ public interface Syntax {
             super(rest, pad);
         }
 
-        public static MethodS transform(Syntax syntax, int pad) {
+        public static MethodS of(Syntax syntax, int pad) {
             return new MethodS(List.of(syntax), pad);
         }
     }
@@ -89,9 +123,44 @@ public interface Syntax {
             super(rest, pad);
         }
 
-        public static QNameS transform(Syntax syntax, int pad) {
-
+        public static QNameS of(Syntax syntax, int pad) {
             return new QNameS(List.of(syntax), pad);
+        }
+    }
+
+    @EqualsAndHashCode(callSuper = true)
+    class ExtendsS extends CompoundSyntax {
+
+        public ExtendsS(List<Syntax> rest, int pad) {
+            super(rest, pad);
+        }
+
+        public static ExtendsS of(Syntax syntax, int pad) {
+            return new ExtendsS(List.of(syntax), pad);
+        }
+    }
+
+    @EqualsAndHashCode(callSuper = true)
+    class ProtectedNsS extends CompoundSyntax {
+
+        public ProtectedNsS(List<Syntax> rest, int pad) {
+            super(rest, pad);
+        }
+
+        public static ProtectedNsS of(Syntax syntax, int pad) {
+            return new ProtectedNsS(List.of(syntax), pad);
+        }
+    }
+
+    @EqualsAndHashCode(callSuper = true)
+    class ImplementsS extends CompoundSyntax {
+
+        public ImplementsS(List<Syntax> rest, int pad) {
+            super(rest, pad);
+        }
+
+        public static ImplementsS of(Syntax syntax, int pad) {
+            return new ImplementsS(List.of(syntax), pad);
         }
     }
 
@@ -103,16 +172,16 @@ public interface Syntax {
         @Getter
         private final String qualifier;
 
-        public NamespaceS(String name, String qualifier, List<ParsedToken> rest) {
-            super(rest);
+        public NamespaceS(String name, String qualifier, List<ParsedToken> rest, int pad) {
+            super(rest, pad);
             this.name = name;
             this.qualifier = qualifier;
         }
 
-        public static NamespaceS of(List<ParsedToken> tokens) {
+        public static NamespaceS of(List<ParsedToken> tokens, int pad) {
             var ns = tokens.get(0).getValue();
             var qualifier = tokens.get(2).getValue();
-            return new NamespaceS(ns, qualifier, tokens);
+            return new NamespaceS(ns, qualifier, tokens, pad);
         }
     }
 
@@ -122,8 +191,8 @@ public interface Syntax {
         @Getter
         private final T value;
 
-        public SingleParamSyntax(List<ParsedToken> rest, T param) {
-            super(rest);
+        public SingleParamSyntax(List<ParsedToken> rest, int pad, T param) {
+            super(rest, pad);
             this.value = param;
         }
 
@@ -131,100 +200,100 @@ public interface Syntax {
 
     @EqualsAndHashCode(callSuper = true)
     class RefIdS extends SingleParamSyntax<String> {
-        public RefIdS(List<ParsedToken> rest) {
-            super(rest, rest.get(1).getValue());
+        public RefIdS(List<ParsedToken> rest, int pad) {
+            super(rest, pad, rest.get(1).getValue());
         }
 
-        public static RefIdS of(List<ParsedToken> tokens) {
-            return new RefIdS(tokens);
+        public static RefIdS of(List<ParsedToken> tokens, int pad) {
+            return new RefIdS(tokens, pad);
         }
     }
 
     @EqualsAndHashCode(callSuper = true)
     class DispIdS extends SingleParamSyntax<String> {
-        public DispIdS(List<ParsedToken> rest) {
-            super(rest, rest.get(1).getValue());
+        public DispIdS(List<ParsedToken> rest, int pad) {
+            super(rest, pad, rest.get(1).getValue());
         }
 
-        public static DispIdS of(List<ParsedToken> tokens) {
-            return new DispIdS(tokens);
+        public static DispIdS of(List<ParsedToken> tokens, int pad) {
+            return new DispIdS(tokens, pad);
         }
     }
 
     @EqualsAndHashCode(callSuper = true)
     class NameS extends SingleParamSyntax<String> {
-        public NameS(List<ParsedToken> rest) {
-            super(rest, rest.get(1).getValue());
+        public NameS(List<ParsedToken> rest, int pad) {
+            super(rest, pad, rest.get(1).getValue());
         }
 
-        public static NameS of(List<ParsedToken> tokens) {
-            return new NameS(tokens);
+        public static NameS of(List<ParsedToken> tokens, int pad) {
+            return new NameS(tokens, pad);
         }
     }
 
     @EqualsAndHashCode(callSuper = true)
     class RTQNameS extends SingleParamSyntax<String> {
-        public RTQNameS(List<ParsedToken> rest) {
-            super(rest, rest.get(2).getValue());
+        public RTQNameS(List<ParsedToken> rest, int pad) {
+            super(rest, pad, rest.get(2).getValue());
         }
 
-        public static RTQNameS of(List<ParsedToken> tokens) {
-            return new RTQNameS(tokens);
+        public static RTQNameS of(List<ParsedToken> tokens, int pad) {
+            return new RTQNameS(tokens, pad);
         }
     }
 
     @EqualsAndHashCode(callSuper = true)
     class FlagS extends SingleParamSyntax<String> {
-        public FlagS(List<ParsedToken> rest) {
-            super(rest, rest.get(1).getValue());
+        public FlagS(List<ParsedToken> rest, int pad) {
+            super(rest, pad, rest.get(0).getValue());
         }
 
-        public static FlagS of(List<ParsedToken> tokens) {
-            return new FlagS(tokens);
+        public static FlagS of(List<ParsedToken> tokens, int pad) {
+            return new FlagS(tokens, pad);
         }
     }
 
     @EqualsAndHashCode(callSuper = true)
     class MaxStackS extends SingleParamSyntax<String> {
-        public MaxStackS(List<ParsedToken> rest) {
-            super(rest, rest.get(1).getValue());
+        public MaxStackS(List<ParsedToken> rest, int pad) {
+            super(rest, pad, rest.get(1).getValue());
         }
 
-        public static MaxStackS of(List<ParsedToken> tokens) {
-            return new MaxStackS(tokens);
+        public static MaxStackS of(List<ParsedToken> tokens, int pad) {
+            return new MaxStackS(tokens, pad);
         }
     }
 
     @EqualsAndHashCode(callSuper = true)
     class LocalCountS extends SingleParamSyntax<String> {
-        public LocalCountS(List<ParsedToken> rest) {
-            super(rest, rest.get(1).getValue());
+        public LocalCountS(List<ParsedToken> rest, int pad) {
+            super(rest, pad, rest.get(1).getValue());
         }
 
-        public static LocalCountS of(List<ParsedToken> tokens) {
-            return new LocalCountS(tokens);
+        public static LocalCountS of(List<ParsedToken> tokens, int pad) {
+            return new LocalCountS(tokens, pad);
         }
     }
 
     @EqualsAndHashCode(callSuper = true)
     class InitScopeDepthS extends SingleParamSyntax<String> {
-        public InitScopeDepthS(List<ParsedToken> rest) {
-            super(rest, rest.get(1).getValue());
+        public InitScopeDepthS(List<ParsedToken> rest, int pad) {
+            super(rest, pad, rest.get(1).getValue());
         }
 
-        public static InitScopeDepthS of(List<ParsedToken> tokens) {
-            return new InitScopeDepthS(tokens);
+        public static InitScopeDepthS of(List<ParsedToken> tokens, int pad) {
+            return new InitScopeDepthS(tokens, pad);
         }
     }
 
     @EqualsAndHashCode(callSuper = true)
     class MaxScopeDepthS extends SingleParamSyntax<String> {
-        public MaxScopeDepthS(List<ParsedToken> rest) {
-            super(rest, rest.get(1).getValue());
+        public MaxScopeDepthS(List<ParsedToken> rest, int pad) {
+            super(rest, pad, rest.get(1).getValue());
         }
 
-        public static MaxScopeDepthS of(List<ParsedToken> tokens) {
-            return new MaxScopeDepthS(tokens);
+        public static MaxScopeDepthS of(List<ParsedToken> tokens, int pad) {
+            return new MaxScopeDepthS(tokens, pad);
         }
     }
 
