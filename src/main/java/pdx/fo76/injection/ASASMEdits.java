@@ -110,28 +110,28 @@ public class ASASMEdits {
                             new TraitSlot(slot, null, type, new Value("False()"))
                     ));
 
-                    var loaderNode = InstructionReader.readNodeFromTemplate(context.templatePath.resolve("quantitymenu_ctor.asasm"), fqName);
+                    var loaderNode = context.readNodeFromTemplate("quantitymenu_ctor.asasm", fqName);
                     instance.m(IINIT, BODY, CODE)
                             .insertBeforeLast(RETURN_VOID, loaderNode.getInstructions());
 
-                    var openMenuNode = InstructionReader.readNodeFromTemplate(context.templatePath.resolve("quantitymenu_openmenu.asasm"), fqName);
+                    var openMenuNode = context.readNodeFromTemplate("quantitymenu_openmenu.asasm", fqName);
                     instance.methodCode("OpenMenu")
                             .insertBeforeLast(RETURN_VOID, openMenuNode.getInstructions());
 
-                    var closeMenuNode = InstructionReader.readNodeFromTemplate(context.templatePath.resolve("quantitymenu_closemenu.asasm"), fqName);
+                    var closeMenuNode = context.readNodeFromTemplate("quantitymenu_closemenu.asasm", fqName);
                     instance.methodCode("CloseMenu")
                             .insertBeforeLast(RETURN_VOID, closeMenuNode.getInstructions());
 
                     // replace class/instance/onKeyDowwn
-                    var onKeyDownNode = InstructionReader.readNodeFromTemplate(context.templatePath.resolve("quantitymenu_onKeyDown.asasm"), fqName);
+                    var onKeyDownNode = context.readNodeFromTemplate("quantitymenu_onKeyDown.asasm", fqName);
                     instance.replaceMethod("onKeyDown", onKeyDownNode.getInstructions().get(0));
 
                     // insert class/instance/updateValueInput
-                    var updateValueInputNode = InstructionReader.readNodeFromTemplate(context.templatePath.resolve("quantitymenu_updateValueInput.asasm"), fqName);
+                    var updateValueInputNode = context.readNodeFromTemplate("quantitymenu_updateValueInput.asasm", fqName);
                     instance.insertAfterMethod("onKeyDown", updateValueInputNode.getInstructions().get(0));
 
                     // insert class/instance/onValueClicked
-                    var onValueClickedNode = InstructionReader.readNodeFromTemplate(context.templatePath.resolve("quantitymenu_onValueClicked.asasm"), fqName);
+                    var onValueClickedNode = context.readNodeFromTemplate("quantitymenu_onValueClicked.asasm", fqName);
                     instance.insertAfterMethod("updateValueInput", onValueClickedNode.getInstructions().get(0));
 
                     log.info("added TextField input to QuantityMenu");

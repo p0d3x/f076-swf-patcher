@@ -3,6 +3,8 @@ package pdx.fo76.injection;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import pdx.fo76.asasm.instruction.InstructionReader;
+import pdx.fo76.asasm.instruction.Node;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -72,6 +74,10 @@ public abstract class PatcherStage<T extends PatcherStage<?>> {
             current.execute();
             current = current.next;
         }
+    }
+
+    public Node readNodeFromTemplate(String fileName, String fqName) throws IOException {
+        return InstructionReader.readNodeFromTemplate(templatePath.resolve(fileName), fqName);
     }
 
     public static class PrepareBuildDirectory extends PatcherStage<PatcherStage<?>> {

@@ -2,23 +2,17 @@ package pdx.fo76;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import pdx.fo76.config.ASMEditConfiguration;
 import pdx.fo76.config.Configuration;
 import pdx.fo76.config.PatchConfiguration;
-import pdx.fo76.injection.ASASMEdits;
-import pdx.fo76.injection.PatcherStage;
-import pdx.fo76.injection.PatcherStageABC;
-import pdx.fo76.injection.PatcherStageASASMBundle;
-import pdx.fo76.injection.PatcherStageASASMFile;
+import pdx.fo76.injection.*;
 
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@RequiredArgsConstructor
 public class Main {
 
     public static void main(String[] args) throws Exception {
@@ -32,13 +26,12 @@ public class Main {
         var objectMapper = new ObjectMapper(new YAMLFactory()).findAndRegisterModules();
         var config = objectMapper.readValue(configFile.toFile(), Configuration.class);
 
-        var archivePath = config.getArchivePath();
         for (Map.Entry<String, PatchConfiguration> patch : config.getPatches().entrySet()) {
-            applyPatch(config, archivePath, patch);
+            applyPatch(config, patch);
         }
     }
 
-    private static void applyPatch(Configuration config, Path archivePath, Map.Entry<String, PatchConfiguration> patch) throws Exception {
+    private static void applyPatch(Configuration config, Map.Entry<String, PatchConfiguration> patch) throws Exception {
         log.info("applying patch '{}'", patch.getKey());
         var patchConfig = patch.getValue();
         var modPath = patchConfig.getModDir();
@@ -46,7 +39,7 @@ public class Main {
 
         PatcherStageABC<?> abcStage = new PatcherStage.PrepareBuildDirectory(config.getBsabrowserPath(),
                 config.getRabcdasmPath(), workingDir, config.getTemplatePath())
-                .extractSWFFromBA2(archivePath, patchConfig.getSwfPath())
+                .extractSWFFromBA2(config.getArchivePath(), patchConfig.getSwfPath())
                 .extractABC()
                 .disassembleABC();
 
