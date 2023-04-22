@@ -1,6 +1,7 @@
 package pdx.fo76.asasm.instruction;
 
 import lombok.Getter;
+import pdx.fo76.asasm.SyntaxConstants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +36,7 @@ public abstract class Node {
     }
 
     public Node methodCode(String methodName) {
-        return findMethod(methodName).map(m -> m.m("method", "body", "code")).get();
+        return findMethod(methodName).map(m -> m.m(SyntaxConstants.METHOD, SyntaxConstants.BODY, SyntaxConstants.CODE)).get();
     }
 
     private Optional<Node> findMethod(String methodName) {
@@ -73,14 +74,22 @@ public abstract class Node {
     }
 
     public void insertAfter(String searchName, List<Node> nodes) {
+        insertAfter(searchName, nodes, 1);
+    }
+
+    public void insertAfter(String searchName, List<Node> nodes, int instance) {
+        if (instance <= 0) {
+            throw new IllegalArgumentException(searchName + " not found");
+        }
+        int remaining = instance;
         for (int i = 0; i < instructions.size(); i++) {
             Node instruction = instructions.get(i);
-            if (instruction.getName().equals(searchName)) {
+            if (instruction.getName().equals(searchName) && --remaining == 0) {
                 instructions.addAll(i + 1, nodes);
                 return;
             }
         }
-        throw new IllegalArgumentException(searchName + " not found");
+        insertAfter(searchName, nodes, instance - 1);
     }
 
     public void insertBeforeLast(String searchName, List<Node> nodes) {

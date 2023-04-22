@@ -1,11 +1,12 @@
 package pdx.fo76.asasm.instruction;
 
 import lombok.EqualsAndHashCode;
+import pdx.fo76.asasm.SyntaxConstants;
 
 @EqualsAndHashCode(callSuper = true)
 public class GetSlot extends Indented1ParamNode<Integer> {
 
     public GetSlot(Integer param) {
-        super("getslot", param, 20);
+        super(SyntaxConstants.GET_SLOT, param, 20);
     }
 }

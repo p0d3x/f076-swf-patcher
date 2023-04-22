@@ -5,15 +5,15 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class Type extends SimpleNode {
 
-    private final Identifier type;
+    private final Identifier identifier;
 
-    public Type(Identifier type) {
+    public Type(Identifier identifier) {
         super("type");
-        this.type = type;
+        this.identifier = identifier;
     }
 
     @Override
     public String toString() {
-        return getName() + " " + type;
+        return getName() + " " + identifier;
     }
 }

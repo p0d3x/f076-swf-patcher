@@ -1,6 +1,7 @@
 package pdx.fo76.injection;
 
 import lombok.extern.slf4j.Slf4j;
+import pdx.fo76.asasm.SyntaxConstants;
 import pdx.fo76.asasm.instruction.InstructionReader;
 import pdx.fo76.asasm.instruction.Namespace;
 import pdx.fo76.asasm.instruction.QName;
@@ -9,6 +10,8 @@ import pdx.fo76.asasm.instruction.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+
+import static pdx.fo76.asasm.SyntaxConstants.*;
 
 
 @Slf4j
@@ -20,25 +23,25 @@ public class ASASMEdits {
         return new ASASMEdit() {
             @Override
             public void execute(PatcherStage<?> context, String namespace, String className, Node classNode) throws EditException {
-                var instance = classNode.m("instance");
+                var instance = classNode.m(INSTANCE);
                 var slotQName = QName.ofPackage("__SFCodeObj");
                 var sfCodeObj = new Slot(slotQName);
                 var typeQName = QName.ofPackage("Object");
                 var object = new Type(typeQName);
                 // declare and initialize __SFCodeObj
                 // after iinit
-                instance.insertAfter("iinit", List.of(
+                instance.insertAfter(IINIT, List.of(
                         new TraitSlot(sfCodeObj, null, object, null)
                 ));
                 // after first: pushscope
-                instance.m("iinit", "body", "code")
-                        .insertAfter("pushscope", List.of(
+                instance.m(IINIT, BODY, CODE)
+                        .insertAfter(PUSH_SCOPE, List.of(
                                 new BlankLine(),
                                 new GetLocal0(),
                                 new FindPropStrict(typeQName),
                                 new ConstructProp(typeQName, 0),
                                 new InitProperty(slotQName)
-                        ));
+                        ), 2);
                 log.info("injected __SFCodeObj into {}", className);
             }
         };
@@ -51,15 +54,15 @@ public class ASASMEdits {
             @Override
             public void execute(PatcherStage<?> context, String namespace, String className, Node classNode) throws EditException {
                 try {
-                    var instance = classNode.m("instance");
+                    var instance = classNode.m(INSTANCE);
                     // declare and call loadMod
                     // before end
                     var loaderNode = InstructionReader.readNodeFromTemplate(context.templatePath.resolve(asmFile), className);
-                    instance.insertBeforeLast("end", loaderNode.getInstructions());
+                    instance.insertBeforeLast(END, loaderNode.getInstructions());
                     // before last: returnvoid
                     var loadMod = QName.of(Namespace.ofPrivate(className), "loadMod");
-                    instance.m("iinit", "body", "code")
-                            .insertBeforeLast("returnvoid", List.of(
+                    instance.m(IINIT, BODY, CODE)
+                            .insertBeforeLast(RETURN_VOID, List.of(
                                     new GetLocal0(),
                                     new PushString(new StringLiteral(modFile)),
                                     new CallPropVoid(loadMod, 1),
@@ -82,6 +85,7 @@ public class ASASMEdits {
                 QName[] scopesToReplace = {
                         QName.of(Namespace.ofPrivate(className), fieldName),
                         QName.of(Namespace.ofPrivate(null, className), fieldName),
+                        QName.of(Namespace.ofPrivate(null, className + "/instance#0"), fieldName),
                 };
                 var replacementScope = QName.ofPackage(fieldName);
                 codeNode.replaceScopes(scopesToReplace, replacementScope);
@@ -97,26 +101,26 @@ public class ASASMEdits {
 
                 try {
                     var fqName = (namespace != null ? namespace + ":" : "") + className;
-                    var instance = classNode.m("instance");
+                    var instance = classNode.m(INSTANCE);
 
                     // before first trait slot
                     var slot = new Slot(QName.of(Namespace.ofPrivate(null, fqName), "isEditingValue"));
                     var type = new Type(QName.ofPackage("Boolean"));
-                    instance.insertAfter("iinit", List.of(
+                    instance.insertAfter(IINIT, List.of(
                             new TraitSlot(slot, null, type, new Value("False()"))
                     ));
 
                     var loaderNode = InstructionReader.readNodeFromTemplate(context.templatePath.resolve("quantitymenu_ctor.asasm"), fqName);
-                    instance.m("iinit", "body", "code")
-                            .insertBeforeLast("returnvoid", loaderNode.getInstructions());
+                    instance.m(IINIT, BODY, CODE)
+                            .insertBeforeLast(RETURN_VOID, loaderNode.getInstructions());
 
                     var openMenuNode = InstructionReader.readNodeFromTemplate(context.templatePath.resolve("quantitymenu_openmenu.asasm"), fqName);
                     instance.methodCode("OpenMenu")
-                            .insertBeforeLast("returnvoid", openMenuNode.getInstructions());
+                            .insertBeforeLast(RETURN_VOID, openMenuNode.getInstructions());
 
                     var closeMenuNode = InstructionReader.readNodeFromTemplate(context.templatePath.resolve("quantitymenu_closemenu.asasm"), fqName);
                     instance.methodCode("CloseMenu")
-                            .insertBeforeLast("returnvoid", closeMenuNode.getInstructions());
+                            .insertBeforeLast(RETURN_VOID, closeMenuNode.getInstructions());
 
                     // replace class/instance/onKeyDowwn
                     var onKeyDownNode = InstructionReader.readNodeFromTemplate(context.templatePath.resolve("quantitymenu_onKeyDown.asasm"), fqName);

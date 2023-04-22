@@ -19,9 +19,9 @@ public abstract class PatcherStageASASMBundle<T extends PatcherStageABC<?>> exte
         if (className.contains(".")) {
             var namespace = className.substring(0, className.lastIndexOf("."));
             className = className.substring(className.lastIndexOf(".") + 1);
-            return new PatcherStageASASMFile.ManipulateClassASM(this, namespace, className);
+            return openClass(namespace, className);
         } else {
-            return new PatcherStageASASMFile.ManipulateClassASM(this, null, className);
+            return openClass(null, className);
         }
     }
 
@@ -33,8 +33,8 @@ public abstract class PatcherStageASASMBundle<T extends PatcherStageABC<?>> exte
         return new AssembleABC(this);
     }
 
-    public static class DisassembleABC extends PatcherStageASASMBundle<PatcherStageABC<?>> {
-        public DisassembleABC(PatcherStageABC<?> parent) {
+    public static class DisassembleABC<T extends PatcherStageSWF<?>> extends PatcherStageASASMBundle<PatcherStageABC<T>> {
+        public DisassembleABC(PatcherStageABC<T> parent) {
             super(parent, parent.abcFileName.replace(".abc", ""));
         }
 

@@ -25,11 +25,11 @@ public abstract class PatcherStageASASMFile<T extends PatcherStageASASMBundle<?>
 
     public abstract void execute() throws PatcherException;
 
-    static class ManipulateClassASM extends PatcherStageASASMFile<PatcherStageASASMBundle<?>> {
+    static class ManipulateClassASM<T extends PatcherStageABC<?>> extends PatcherStageASASMFile<PatcherStageASASMBundle<T>> {
         private final String className;
         private final String namespace;
 
-        public ManipulateClassASM(PatcherStageASASMBundle<?> parent, String namespace, String className) {
+        public ManipulateClassASM(PatcherStageASASMBundle<T> parent, String namespace, String className) {
             super(parent);
             this.namespace = namespace;
             this.className = className;

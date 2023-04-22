@@ -1,12 +1,13 @@
 package pdx.fo76.asasm.instruction;
 
 import lombok.EqualsAndHashCode;
+import pdx.fo76.asasm.SyntaxConstants;
 
 @EqualsAndHashCode(callSuper = true)
 public class GetProperty extends Indented1ParamNode<Identifier> {
 
     public GetProperty(Identifier param) {
-        super("getproperty", param, 20);
+        super(SyntaxConstants.GET_PROPERTY, param, 20);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package pdx.fo76.asasm.instruction;
 
 import lombok.RequiredArgsConstructor;
+import pdx.fo76.asasm.SyntaxConstants;
 
 @RequiredArgsConstructor
 public class TypeName implements Identifier {
@@ -14,7 +15,7 @@ public class TypeName implements Identifier {
 
     public static Identifier parse(String str) {
         var prefix = str.substring(0, str.indexOf("("));
-        if (!prefix.equals("TypeName")) {
+        if (!prefix.equals(SyntaxConstants.TYPENAME)) {
             throw new IllegalArgumentException();
         }
         var args = str.substring(str.indexOf("(") + 1, str.lastIndexOf(")"));

@@ -1,6 +1,7 @@
 package pdx.fo76.asasm.instruction;
 
 import lombok.Value;
+import pdx.fo76.asasm.SyntaxConstants;
 
 @Value
 public class RTQName implements Identifier {
@@ -12,7 +13,7 @@ public class RTQName implements Identifier {
 
     public static RTQName parse(String str) {
         var prefix = str.substring(0, str.indexOf("("));
-        if (!prefix.equals("RTQName")) {
+        if (!prefix.equals(SyntaxConstants.RTQ_NAME)) {
             throw new IllegalArgumentException();
         }
         var name = str.substring(str.indexOf("(") + 1, str.lastIndexOf(")")).strip();

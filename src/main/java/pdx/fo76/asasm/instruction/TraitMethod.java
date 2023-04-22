@@ -2,6 +2,7 @@ package pdx.fo76.asasm.instruction;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import pdx.fo76.asasm.SyntaxConstants;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,7 +22,7 @@ public class TraitMethod extends Trait {
     }
 
     public String getType() {
-        return "method";
+        return SyntaxConstants.METHOD;
     }
 
     @Override

@@ -1,10 +1,13 @@
 package pdx.fo76.asasm.instruction;
 
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
+
+@EqualsAndHashCode(callSuper = true)
 public abstract class Indented2ParamNode<T1, T2> extends IndentedSimpleNode {
     private final int paramIndent;
     @Getter

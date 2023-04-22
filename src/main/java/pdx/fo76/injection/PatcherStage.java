@@ -98,11 +98,11 @@ public abstract class PatcherStage<T extends PatcherStage<?>> {
         }
     }
 
-    public static class MoveFile extends PatcherStage<PatcherStage<?>> {
+    public static class MoveFile<T extends PatcherStage<?>> extends PatcherStage<PatcherStage<T>> {
         private final String sourceFile;
         private final Path targetDirectory;
 
-        public MoveFile(PatcherStage<?> parent, String swfFileName, Path targetDirectory) {
+        public MoveFile(PatcherStage<T> parent, String swfFileName, Path targetDirectory) {
             super(parent);
             this.sourceFile = swfFileName;
             this.targetDirectory = targetDirectory;

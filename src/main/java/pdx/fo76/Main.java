@@ -50,7 +50,7 @@ public class Main {
                 .extractABC()
                 .disassembleABC();
 
-        if (!patchConfig.getEdits().isEmpty()) {
+        if (patchConfig.getEdits() != null && !patchConfig.getEdits().isEmpty()) {
             PatcherStageASASMFile<PatcherStageASASMBundle<?>> curStage = null;
             for (var edit : patchConfig.getEdits().entrySet()) {
 

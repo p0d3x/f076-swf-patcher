@@ -14,12 +14,12 @@ public abstract class PatcherStageSWF<T extends PatcherStage<?>> extends Patcher
         this.swfFileName = fileName;
     }
 
-    public PatcherStageABC<PatcherStageSWF<?>> extractABC() {
-        return new PatcherStageABC.ExtractABC(this);
+    public PatcherStageABC<PatcherStageSWF<T>> extractABC() {
+        return new PatcherStageABC.ExtractABC<>(this);
     }
 
-    public PatcherStage<PatcherStage<?>> movePatchedSWF(Path targetDirectory) {
-        return new MoveFile(this, swfFileName, targetDirectory);
+    public PatcherStage<PatcherStage<T>> movePatchedSWF(Path targetDirectory) {
+        return new MoveFile<>(this, swfFileName, targetDirectory);
     }
 
     public static class ExtractSWFFromBA2 extends PatcherStageSWF<PatcherStage<?>> {
@@ -41,10 +41,10 @@ public abstract class PatcherStageSWF<T extends PatcherStage<?>> extends Patcher
         }
     }
 
-    public static class ReplaceABC extends PatcherStageSWF<PatcherStageSWF<?>> {
+    public static class ReplaceABC<T extends PatcherStageSWF<?>> extends PatcherStageSWF<PatcherStageSWF<T>> {
         private final String targetFile;
 
-        public ReplaceABC(PatcherStageSWF<?> parent, String targetFile) {
+        public ReplaceABC(PatcherStageSWF<T> parent, String targetFile) {
             super(parent, parent.archivePath, parent.swfFileName);
             this.targetFile = targetFile;
         }

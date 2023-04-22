@@ -17,16 +17,16 @@ public abstract class PatcherStageABC<T extends PatcherStageSWF<?>> extends Patc
         this.abcFileName = swfFileName.replace(".swf", "-0.abc");
     }
 
-    public PatcherStageASASMBundle<PatcherStageABC<?>> disassembleABC() {
-        return new PatcherStageASASMBundle.DisassembleABC(this);
+    public PatcherStageASASMBundle<PatcherStageABC<T>> disassembleABC() {
+        return new PatcherStageASASMBundle.DisassembleABC<>(this);
     }
 
-    public PatcherStageSWF<PatcherStageSWF<?>> replaceABC(String targetFile) {
-        return new ReplaceABC(this, targetFile);
+    public PatcherStageSWF<PatcherStageSWF<T>> replaceABC(String targetFile) {
+        return new ReplaceABC<>(this, targetFile);
     }
 
-    public static class ExtractABC extends PatcherStageABC<PatcherStageSWF<?>> {
-        public ExtractABC(PatcherStageSWF<?> parent) {
+    public static class ExtractABC<T extends PatcherStage<?>> extends PatcherStageABC<PatcherStageSWF<T>> {
+        public ExtractABC(PatcherStageSWF<T> parent) {
             super(parent);
         }
 

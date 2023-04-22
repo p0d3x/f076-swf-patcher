@@ -1,6 +1,7 @@
 package pdx.fo76.asasm.instruction;
 
 import lombok.Value;
+import pdx.fo76.asasm.SyntaxConstants;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -11,11 +12,11 @@ public class Namespace {
     String[] scopes;
 
     public static Namespace ofPackage(String ... scopes) {
-        return new Namespace("PackageNamespace", scopes);
+        return new Namespace(SyntaxConstants.PACKAGE_NAMESPACE, scopes);
     }
 
     public static Namespace ofPrivate(String ... scopes) {
-        return new Namespace("PrivateNamespace", scopes);
+        return new Namespace(SyntaxConstants.PRIVATE_NAMESPACE, scopes);
     }
 
     public static Namespace parse(String str) {
