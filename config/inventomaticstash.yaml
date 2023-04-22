@@ -16,11 +16,5 @@ patches:
           params:
             modFile: "InventOmaticStash.swf"
             template: "modloader_callback.asasm"
-        - name: "makePackagePrivate"
-          params:
-            fieldName: "ButtonHintDataV"
-        - name: "makePackagePrivate"
-          params:
-            fieldName: "ButtonHintBar_mc"
       "Shared.AS3.QuantityMenu":
         - name: "patchQuantityMenu"
