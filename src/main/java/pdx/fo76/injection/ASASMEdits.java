@@ -1,10 +1,6 @@
 package pdx.fo76.injection;
 
 import lombok.extern.slf4j.Slf4j;
-import pdx.fo76.asasm.SyntaxConstants;
-import pdx.fo76.asasm.instruction.InstructionReader;
-import pdx.fo76.asasm.instruction.Namespace;
-import pdx.fo76.asasm.instruction.QName;
 import pdx.fo76.asasm.instruction.*;
 
 import java.io.IOException;
