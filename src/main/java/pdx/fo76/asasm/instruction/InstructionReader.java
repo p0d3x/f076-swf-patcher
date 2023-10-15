@@ -156,9 +156,9 @@ public class InstructionReader {
 
     private static String readTypeName(String str) {
         var mName = ParseUtil.callSiteName(str);
-        if (mName.equals(TYPENAME)) {
+        if (TYPENAME.equals(mName)) {
             return str.substring(0, str.lastIndexOf(">") + 2);
-        } else if (mName.equals(Q_NAME)) {
+        } else if (Q_NAME.equals(mName)) {
             return readIdentifier(str);
         } else {
             throw new IllegalArgumentException();

@@ -10,7 +10,6 @@ public record RTQName(String name) implements Identifier {
 
     public static RTQName parse(String str) {
         var prefix = ParseUtil.callSiteName(str);
-        ;
         if (!SyntaxConstants.RTQ_NAME.equals(prefix)) {
             throw new IllegalArgumentException();
         }

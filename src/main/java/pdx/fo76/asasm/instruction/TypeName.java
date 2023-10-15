@@ -20,8 +20,8 @@ public class TypeName implements Identifier {
             throw new IllegalArgumentException();
         }
         var args = ParseUtil.stripParentheses(str);
-        var qns = args.substring(0, args.indexOf("<"));
-        var param = args.substring(args.indexOf("<") + 1, args.lastIndexOf(">"));
+        var qns = ParseUtil.extractPrefix(args, "<");
+        var param = ParseUtil.stripEnclosed(args, "<", ">");
         var qn = QName.parse(qns);
         var qn2 = Identifier.parse(param);
         return new TypeName(qn, qn2);

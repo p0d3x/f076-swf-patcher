@@ -10,8 +10,7 @@ public record QName(Namespace namespace, String fieldName) implements Identifier
 
     public static QName parse(String str) {
         var prefix = ParseUtil.callSiteName(str);
-        ;
-        if (!prefix.equals(SyntaxConstants.Q_NAME)) {
+        if (!SyntaxConstants.Q_NAME.equals(prefix)) {
             throw new IllegalArgumentException();
         }
         var args = ParseUtil.stripParentheses(str);
