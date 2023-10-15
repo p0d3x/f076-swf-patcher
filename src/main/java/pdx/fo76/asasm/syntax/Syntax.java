@@ -251,8 +251,8 @@ public interface Syntax {
         }
 
         public static NamespaceS of(List<ParsedToken> tokens, int pad) {
-            var ns = tokens.get(0).getValue();
-            var qualifier = tokens.get(2).getValue();
+            var ns = tokens.get(0).value();
+            var qualifier = tokens.get(2).value();
             return new NamespaceS(ns, qualifier, tokens, pad);
         }
     }
@@ -273,7 +273,7 @@ public interface Syntax {
     @EqualsAndHashCode(callSuper = true)
     class RefIdS extends SingleParamSyntax<String> {
         public RefIdS(List<ParsedToken> rest, int pad) {
-            super(rest, pad, rest.get(1).getValue());
+            super(rest, pad, rest.get(1).value());
         }
 
         public static RefIdS of(List<ParsedToken> tokens, int pad) {
@@ -289,7 +289,7 @@ public interface Syntax {
     @EqualsAndHashCode(callSuper = true)
     class DispIdS extends SingleParamSyntax<String> {
         public DispIdS(List<ParsedToken> rest, int pad) {
-            super(rest, pad, rest.get(1).getValue());
+            super(rest, pad, rest.get(1).value());
         }
 
         public static DispIdS of(List<ParsedToken> tokens, int pad) {
@@ -305,7 +305,7 @@ public interface Syntax {
     @EqualsAndHashCode(callSuper = true)
     class NameS extends SingleParamSyntax<String> {
         public NameS(List<ParsedToken> rest, int pad) {
-            super(rest, pad, rest.get(1).getValue());
+            super(rest, pad, rest.get(1).value());
         }
 
         public static NameS of(List<ParsedToken> tokens, int pad) {
@@ -321,7 +321,7 @@ public interface Syntax {
     @EqualsAndHashCode(callSuper = true)
     class RTQNameS extends SingleParamSyntax<String> {
         public RTQNameS(List<ParsedToken> rest, int pad) {
-            super(rest, pad, rest.get(2).getValue());
+            super(rest, pad, rest.get(2).value());
         }
 
         public static RTQNameS of(List<ParsedToken> tokens, int pad) {
@@ -337,7 +337,7 @@ public interface Syntax {
     @EqualsAndHashCode(callSuper = true)
     class FlagS extends SingleParamSyntax<String> {
         public FlagS(List<ParsedToken> rest, int pad) {
-            super(rest, pad, rest.get(0).getValue());
+            super(rest, pad, rest.get(0).value());
         }
 
         public static FlagS of(List<ParsedToken> tokens, int pad) {
@@ -348,7 +348,7 @@ public interface Syntax {
     @EqualsAndHashCode(callSuper = true)
     class MaxStackS extends SingleParamSyntax<String> {
         public MaxStackS(List<ParsedToken> rest, int pad) {
-            super(rest, pad, rest.get(1).getValue());
+            super(rest, pad, rest.get(1).value());
         }
 
         public static MaxStackS of(List<ParsedToken> tokens, int pad) {
@@ -359,7 +359,7 @@ public interface Syntax {
     @EqualsAndHashCode(callSuper = true)
     class LocalCountS extends SingleParamSyntax<String> {
         public LocalCountS(List<ParsedToken> rest, int pad) {
-            super(rest, pad, rest.get(1).getValue());
+            super(rest, pad, rest.get(1).value());
         }
 
         public static LocalCountS of(List<ParsedToken> tokens, int pad) {
@@ -370,7 +370,7 @@ public interface Syntax {
     @EqualsAndHashCode(callSuper = true)
     class InitScopeDepthS extends SingleParamSyntax<String> {
         public InitScopeDepthS(List<ParsedToken> rest, int pad) {
-            super(rest, pad, rest.get(1).getValue());
+            super(rest, pad, rest.get(1).value());
         }
 
         public static InitScopeDepthS of(List<ParsedToken> tokens, int pad) {
@@ -381,7 +381,7 @@ public interface Syntax {
     @EqualsAndHashCode(callSuper = true)
     class MaxScopeDepthS extends SingleParamSyntax<String> {
         public MaxScopeDepthS(List<ParsedToken> rest, int pad) {
-            super(rest, pad, rest.get(1).getValue());
+            super(rest, pad, rest.get(1).value());
         }
 
         public static MaxScopeDepthS of(List<ParsedToken> tokens, int pad) {

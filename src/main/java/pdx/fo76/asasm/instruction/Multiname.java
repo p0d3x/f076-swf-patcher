@@ -1,6 +1,8 @@
 package pdx.fo76.asasm.instruction;
 
 import lombok.Value;
+import pdx.fo76.asasm.SyntaxConstants;
+import pdx.fo76.asasm.util.ParseUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +17,11 @@ public class Multiname implements Identifier {
     }
 
     public static Multiname parse(String str) {
-        var prefix = str.substring(0, str.indexOf("("));
-        if (!prefix.equals("Multiname")) {
+        var prefix = ParseUtil.callSiteName(str);
+        if (!SyntaxConstants.MULTINAME.equals(prefix)) {
             throw new IllegalArgumentException();
         }
-        var args = str.substring(str.indexOf("(") + 1, str.lastIndexOf(")")).split(",", 2);
+        var args = ParseUtil.stripParentheses(str).split(",", 2);
         var quoted = args[0].strip();
         var fieldName = quoted.substring(1, quoted.length() - 1);
 

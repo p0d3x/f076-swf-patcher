@@ -1,7 +1,7 @@
 package pdx.fo76.asasm.instruction;
 
 import lombok.extern.slf4j.Slf4j;
-import pdx.fo76.asasm.SyntaxConstants;
+import pdx.fo76.asasm.util.ParseUtil;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -155,7 +155,7 @@ public class InstructionReader {
     }
 
     private static String readTypeName(String str) {
-        var mName = str.substring(0, str.indexOf("("));
+        var mName = ParseUtil.callSiteName(str);
         if (mName.equals(TYPENAME)) {
             return str.substring(0, str.lastIndexOf(">") + 2);
         } else if (mName.equals(Q_NAME)) {

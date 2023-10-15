@@ -1,12 +1,15 @@
 package pdx.fo76.asasm.syntax;
 
-import lombok.Value;
+import java.util.NoSuchElementException;
 
 public interface Either<S, T> {
 
     boolean isLeft();
+
     boolean isRight();
+
     S left();
+
     T right();
 
     static <S, T> Either<S, T> left(S val) {
@@ -17,10 +20,7 @@ public interface Either<S, T> {
         return new Right<>(val);
     }
 
-    @Value
-    class Left<S, T> implements Either<S, T> {
-
-        S value;
+    record Left<S, T>(S value) implements Either<S, T> {
 
         @Override
         public boolean isLeft() {
@@ -39,14 +39,11 @@ public interface Either<S, T> {
 
         @Override
         public T right() {
-            throw new RuntimeException();
+            throw new NoSuchElementException();
         }
     }
 
-    @Value
-    class Right<S, T> implements Either<S, T> {
-
-        T value;
+    record Right<S, T>(T value) implements Either<S, T> {
 
         @Override
         public boolean isLeft() {
@@ -60,7 +57,7 @@ public interface Either<S, T> {
 
         @Override
         public S left() {
-            throw new RuntimeException();
+            throw new NoSuchElementException();
         }
 
         @Override

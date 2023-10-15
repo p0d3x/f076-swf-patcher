@@ -27,7 +27,7 @@ public class TokenReader {
                     var parsed = token.read(line, i, pos);
                     if (parsed != null) {
                         result.add(parsed);
-                        var consumedLength = parsed.getValue().length();
+                        var consumedLength = parsed.value().length();
                         pos += consumedLength;
                         line = line.substring(consumedLength);
                         found = true;

@@ -1,24 +1,22 @@
 package pdx.fo76.asasm.instruction;
 
-import lombok.Value;
+import pdx.fo76.asasm.SyntaxConstants;
+import pdx.fo76.asasm.util.ParseUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Value
-public class MultinameL implements Identifier {
-    List<Namespace> namespaces;
-
+public record MultinameL(List<Namespace> namespaces) implements Identifier {
     public String toString() {
         return "MultinameL(" + namespaces + ")";
     }
 
     public static MultinameL parse(String str) {
-        var prefix = str.substring(0, str.indexOf("("));
-        if (!prefix.equals("MultinameL")) {
+        var prefix = ParseUtil.callSiteName(str);
+        if (!SyntaxConstants.MULTINAME_L.equals(prefix)) {
             throw new IllegalArgumentException();
         }
-        var nsbrackets = str.substring(str.indexOf("(") + 1, str.lastIndexOf(")")).strip();
+        var nsbrackets = ParseUtil.stripParentheses(str);
         var ns = nsbrackets.substring(1, nsbrackets.length() - 1);
         var nss = ns.strip();
         var namespaces = new ArrayList<Namespace>();

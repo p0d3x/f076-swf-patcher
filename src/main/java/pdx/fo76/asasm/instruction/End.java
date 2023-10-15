@@ -1,7 +1,6 @@
 package pdx.fo76.asasm.instruction;
 
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import pdx.fo76.asasm.SyntaxConstants;
 

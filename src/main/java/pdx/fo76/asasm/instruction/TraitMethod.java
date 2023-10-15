@@ -36,6 +36,6 @@ public class TraitMethod extends Trait {
     }
 
     public String getMethodName() {
-        return qName.getFieldName();
+        return qName.fieldName();
     }
 }

@@ -2,6 +2,7 @@ package pdx.fo76.asasm.instruction;
 
 import lombok.Value;
 import pdx.fo76.asasm.SyntaxConstants;
+import pdx.fo76.asasm.util.ParseUtil;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -20,8 +21,8 @@ public class Namespace {
     }
 
     public static Namespace parse(String str) {
-        var prefix = str.substring(0, str.indexOf("("));
-        var args = str.substring(str.indexOf("(") + 1, str.lastIndexOf(")"));
+        var prefix = ParseUtil.callSiteName(str);
+        var args = ParseUtil.stripParentheses(str);
         var scopes = args.split(",\\s*");
         for (int i = 0; i < scopes.length; i++) {
             scopes[i] = scopes[i].trim();

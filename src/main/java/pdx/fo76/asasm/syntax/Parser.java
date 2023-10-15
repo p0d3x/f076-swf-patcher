@@ -420,7 +420,7 @@ public interface Parser<T extends Syntax> {
                     i = 0;
                     bestDepth = cur;
                 } else {
-                    bestDepth = Math.max(cur, res.right().getPosition());
+                    bestDepth = Math.max(cur, res.right().position());
                 }
             }
             if (result.isEmpty()) {
@@ -454,7 +454,7 @@ public interface Parser<T extends Syntax> {
                     i = 0;
                     bestDepth = cur;
                 } else {
-                    bestDepth = Math.max(cur, res.right().getPosition());
+                    bestDepth = Math.max(cur, res.right().position());
                 }
             }
             if (result.isEmpty()) {
@@ -474,7 +474,7 @@ public interface Parser<T extends Syntax> {
             if (second.isLeft()) {
                 return (Either<Syntax, ParseStop>) second;
             }
-            return (Either<Syntax, ParseStop>) (first.right().getPosition() >= second.right().getPosition() ? first : second);
+            return (Either<Syntax, ParseStop>) (first.right().position() >= second.right().position() ? first : second);
         };
     }
 
@@ -533,13 +533,13 @@ public interface Parser<T extends Syntax> {
             if (tokens.size() < sequence.size() + pos + (options.isEmpty() ? 0 : 1)) {
                 return Either.right(new ParseStop(pos));
             }
-            if (!options.isEmpty() && !options.contains(tokens.get(pos).getToken())) {
+            if (!options.isEmpty() && !options.contains(tokens.get(pos).token())) {
                 return Either.right(new ParseStop(pos));
             }
             var offs = options.isEmpty() ? 0 : 1;
             if (!sequence.isEmpty()) {
                 for (int i = 0; i < sequence.size(); i++) {
-                    if (tokens.get(pos + offs + i).getToken() != sequence.get(i)) {
+                    if (tokens.get(pos + offs + i).token() != sequence.get(i)) {
                         return Either.right(new ParseStop(pos + offs + i));
                     }
                 }
@@ -605,7 +605,7 @@ public interface Parser<T extends Syntax> {
                 if (result.isLeft()) {
                     return (Either<Syntax, ParseStop>) result;
                 } else {
-                    bestPos = Math.max(result.right().getPosition(), bestPos);
+                    bestPos = Math.max(result.right().position(), bestPos);
                 }
             }
             return Either.right(new ParseStop(bestPos));
@@ -627,7 +627,7 @@ public interface Parser<T extends Syntax> {
                     return false;
                 }
                 for (int i = 0; i < sequence.length; i++) {
-                    if (sequence[i] != tokens.get(pos + i).getToken()) {
+                    if (sequence[i] != tokens.get(pos + i).token()) {
                         return false;
                     }
                 }

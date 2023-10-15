@@ -53,7 +53,7 @@ public class ASASMEdits {
                     var instance = classNode.m(INSTANCE);
                     // declare and call loadMod
                     // before end
-                    var loaderNode = InstructionReader.readNodeFromTemplate(context.templatePath.resolve(asmFile), className);
+                    var loaderNode = context.readNodeFromTemplate(asmFile, className);
                     instance.insertBeforeLast(END, loaderNode.getInstructions());
                     // before last: returnvoid
                     var loadMod = QName.of(Namespace.ofPrivate(className), "loadMod");

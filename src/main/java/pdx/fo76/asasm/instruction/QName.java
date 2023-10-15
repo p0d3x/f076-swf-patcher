@@ -1,23 +1,20 @@
 package pdx.fo76.asasm.instruction;
 
-import lombok.Value;
 import pdx.fo76.asasm.SyntaxConstants;
+import pdx.fo76.asasm.util.ParseUtil;
 
-@Value
-public class QName implements Identifier {
-    Namespace namespace;
-    String fieldName;
-
+public record QName(Namespace namespace, String fieldName) implements Identifier {
     public static QName ofPackage(String className) {
         return of(Namespace.ofPackage(""), className);
     }
 
     public static QName parse(String str) {
-        var prefix = str.substring(0, str.indexOf("("));
+        var prefix = ParseUtil.callSiteName(str);
+        ;
         if (!prefix.equals(SyntaxConstants.Q_NAME)) {
             throw new IllegalArgumentException();
         }
-        var args = str.substring(str.indexOf("(") + 1, str.lastIndexOf(")"));
+        var args = ParseUtil.stripParentheses(str);
         var ns = Namespace.parse(args.substring(0, args.lastIndexOf(")") + 1));
         var quoted = args.substring(args.lastIndexOf(",") + 1).trim();
         var fieldName = quoted.substring(1, quoted.length() - 1);

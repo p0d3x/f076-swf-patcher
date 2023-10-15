@@ -1,22 +1,20 @@
 package pdx.fo76.asasm.instruction;
 
-import lombok.Value;
 import pdx.fo76.asasm.SyntaxConstants;
+import pdx.fo76.asasm.util.ParseUtil;
 
-@Value
-public class RTQName implements Identifier {
-    String name;
-
+public record RTQName(String name) implements Identifier {
     public String toString() {
         return "RTQName(" + (name == null ? null : "\"" + name + "\"") + ")";
     }
 
     public static RTQName parse(String str) {
-        var prefix = str.substring(0, str.indexOf("("));
-        if (!prefix.equals(SyntaxConstants.RTQ_NAME)) {
+        var prefix = ParseUtil.callSiteName(str);
+        ;
+        if (!SyntaxConstants.RTQ_NAME.equals(prefix)) {
             throw new IllegalArgumentException();
         }
-        var name = str.substring(str.indexOf("(") + 1, str.lastIndexOf(")")).strip();
+        var name = ParseUtil.stripParentheses(str);
         if (name.equals("null")) {
             return new RTQName(null);
         }

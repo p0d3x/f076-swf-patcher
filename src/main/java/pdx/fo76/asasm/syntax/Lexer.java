@@ -26,7 +26,7 @@ public class Lexer {
                     found = true;
                     result.add(lex.left());
                 } else {
-                    bestPos = Math.max(bestPos, lex.right().getPosition());
+                    bestPos = Math.max(bestPos, lex.right().position());
                 }
             }
             if (!found) {
