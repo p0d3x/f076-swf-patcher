@@ -21,7 +21,7 @@ public record QName(Namespace namespace, String fieldName) implements Identifier
     }
 
     public String toString() {
-        return "QName(" + namespace + ", \"" + fieldName + "\")";
+        return SyntaxConstants.Q_NAME + "(" + namespace + ", \"" + fieldName + "\")";
     }
 
     public static QName of(Namespace namespace, String fieldName) {

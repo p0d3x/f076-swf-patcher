@@ -3,6 +3,7 @@ package pdx.fo76.asasm.syntax;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import pdx.fo76.asasm.SyntaxConstants;
 import pdx.fo76.asasm.token.ParsedToken;
 
 import java.util.List;
@@ -330,7 +331,7 @@ public interface Syntax {
 
         @Override
         public String toString() {
-            return "RTQName(" + value + ")";
+            return SyntaxConstants.RTQ_NAME + "(" + value + ")";
         }
     }
 

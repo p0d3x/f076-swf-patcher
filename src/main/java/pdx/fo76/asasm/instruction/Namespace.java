@@ -28,7 +28,7 @@ public class Namespace {
             scopes[i] = scopes[i].trim();
             if (scopes[i].startsWith("\"")) {
                 scopes[i] = scopes[i].substring(1, scopes[i].length() - 1);
-            } else if (scopes[i].equals("null")) {
+            } else if (SyntaxConstants.NULL_LITERAL.equals(scopes[i])) {
                  scopes[i] = null;
             }
         }

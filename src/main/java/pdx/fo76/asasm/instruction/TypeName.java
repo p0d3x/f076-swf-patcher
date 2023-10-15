@@ -11,7 +11,7 @@ public class TypeName implements Identifier {
 
     @Override
     public String toString() {
-        return "TypeName(" + type + "<" + param + ">)";
+        return SyntaxConstants.TYPENAME + "(" + type + "<" + param + ">)";
     }
 
     public static Identifier parse(String str) {

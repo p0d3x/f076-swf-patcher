@@ -5,7 +5,7 @@ import pdx.fo76.asasm.util.ParseUtil;
 
 public record RTQName(String name) implements Identifier {
     public String toString() {
-        return "RTQName(" + (name == null ? null : "\"" + name + "\"") + ")";
+        return SyntaxConstants.RTQ_NAME + "(" + (name == null ? null : "\"" + name + "\"") + ")";
     }
 
     public static RTQName parse(String str) {
@@ -14,7 +14,7 @@ public record RTQName(String name) implements Identifier {
             throw new IllegalArgumentException();
         }
         var name = ParseUtil.stripParentheses(str);
-        if (name.equals("null")) {
+        if (SyntaxConstants.NULL_LITERAL.equals(name)) {
             return new RTQName(null);
         }
         var nameNoQuotes = name.substring(1, name.length() - 1);

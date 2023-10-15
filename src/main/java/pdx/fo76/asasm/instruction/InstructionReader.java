@@ -1,6 +1,7 @@
 package pdx.fo76.asasm.instruction;
 
 import lombok.extern.slf4j.Slf4j;
+import pdx.fo76.asasm.SyntaxConstants;
 import pdx.fo76.asasm.util.ParseUtil;
 
 import java.io.IOException;
@@ -166,7 +167,7 @@ public class InstructionReader {
     }
 
     private static String readIdentifier(String str) {
-        if (str.equals("null")) {
+        if (SyntaxConstants.NULL_LITERAL.equals(str)) {
             return null;
         }
         int o = 0;
@@ -192,7 +193,7 @@ public class InstructionReader {
     }
 
     private static StringLiteral readStringLiteral(String arg) {
-        return new StringLiteral(arg.equals("null") ? null : arg.substring(1, arg.length() - 1));
+        return new StringLiteral(SyntaxConstants.NULL_LITERAL.equals(arg) ? null : arg.substring(1, arg.length() - 1));
     }
 
     private static NotImplemented readNotImplemented(String keyword, String args) {

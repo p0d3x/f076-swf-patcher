@@ -8,7 +8,7 @@ import java.util.List;
 
 public record MultinameL(List<Namespace> namespaces) implements Identifier {
     public String toString() {
-        return "MultinameL(" + namespaces + ")";
+        return SyntaxConstants.MULTINAME_L + "(" + namespaces + ")";
     }
 
     public static MultinameL parse(String str) {
